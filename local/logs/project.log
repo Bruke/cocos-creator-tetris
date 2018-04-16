@@ -1,0 +1,95 @@
+2018-04-16T14:33:20.515Z - normal: Load ~/.CocosCreator/settings.json
+2018-04-16T14:33:20.519Z - normal: checking language setting...
+2018-04-16T14:33:20.519Z - normal: Language: zh
+2018-04-16T14:33:23.508Z - success: protocol editor-framework registered
+2018-04-16T14:33:23.508Z - success: protocol app registered
+2018-04-16T14:33:23.508Z - success: protocol theme registered
+2018-04-16T14:33:23.509Z - success: protocol packages registered
+2018-04-16T14:33:23.509Z - success: protocol unpack registerred
+2018-04-16T14:33:23.509Z - success: protocol disable-commonjs registerred
+2018-04-16T14:33:23.647Z - normal: connected!
+2018-04-16T14:33:23.653Z - normal: Check project /Users/amyli/Documents/Work/Prj/creater/Tetris
+2018-04-16T14:33:23.658Z - normal: Initializing Cocos2d
+2018-04-16T14:33:24.452Z - normal: Initializing Asset Database
+2018-04-16T14:33:24.565Z - success: protocol uuid registerred
+2018-04-16T14:33:24.566Z - success: protocol db registerred
+2018-04-16T14:33:24.566Z - success: protocol thumbnail registerred
+2018-04-16T14:33:24.566Z - normal: Loading editor/builtin packages
+2018-04-16T14:33:24.634Z - success: anysdk loaded
+2018-04-16T14:33:25.003Z - success: assets loaded
+2018-04-16T14:33:25.013Z - success: builder loaded
+2018-04-16T14:33:25.021Z - success: cocos-analytics loaded
+2018-04-16T14:33:25.039Z - success: console loaded
+2018-04-16T14:33:25.126Z - success: fb-instant-games loaded
+2018-04-16T14:33:25.139Z - success: hierarchy loaded
+2018-04-16T14:33:25.154Z - success: inspector loaded
+2018-04-16T14:33:25.159Z - success: keystore loaded
+2018-04-16T14:33:25.185Z - success: node-library loaded
+2018-04-16T14:33:25.191Z - success: package-asset loaded
+2018-04-16T14:33:25.200Z - success: preferences loaded
+2018-04-16T14:33:25.209Z - success: project-exporter loaded
+2018-04-16T14:33:25.262Z - success: project-importer loaded
+2018-04-16T14:33:25.269Z - success: project-settings loaded
+2018-04-16T14:33:25.281Z - success: ui-kit loaded
+2018-04-16T14:33:25.294Z - success: ui-grid loaded
+2018-04-16T14:33:25.307Z - success: scene loaded
+2018-04-16T14:33:25.312Z - success: sprite-editor loaded
+2018-04-16T14:33:25.326Z - success: store loaded
+2018-04-16T14:33:25.345Z - success: timeline loaded
+2018-04-16T14:33:25.346Z - normal: Loading builtin packages
+2018-04-16T14:33:25.358Z - success: asset-db-debugger loaded
+2018-04-16T14:33:25.362Z - success: color-picker loaded
+2018-04-16T14:33:25.370Z - success: package-manager loaded
+2018-04-16T14:33:25.394Z - success: sdkbox loaded
+2018-04-16T14:33:25.409Z - success: tester loaded
+2018-04-16T14:33:25.418Z - success: ui-kit-preview-extra loaded
+2018-04-16T14:33:25.427Z - success: ui-kit-preview loaded
+2018-04-16T14:33:25.438Z - success: ui-tree loaded
+2018-04-16T14:33:28.378Z - normal: Initializing project /Users/amyli/Documents/Work/Prj/creater/Tetris
+2018-04-16T14:33:28.383Z - normal: Loading packages
+2018-04-16T14:33:28.388Z - normal: Watching packages
+2018-04-16T14:33:28.408Z - normal: Run Application
+2018-04-16T14:33:31.273Z - success: preview server running at http://localhost:7456
+2018-04-16T14:33:39.889Z - normal: 1.9.0
+2018-04-16T14:34:39.434Z - error: { Error: connect ETIMEDOUT 211.151.21.150:443
+    at Object.exports._errnoException (util.js:1050:11)
+    at exports._exceptionWithHostPort (util.js:1073:20)
+    at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1097:14)
+  code: 'ETIMEDOUT',
+  errno: 'ETIMEDOUT',
+  syscall: 'connect',
+  address: '211.151.21.150',
+  port: 443 }
+    at /Applications/CocosCreator.app/Contents/Resources/app.asar/share/login/lib/user.js:1:1441
+    at ClientRequest.Https.request.on.e (/Applications/CocosCreator.app/Contents/Resources/app.asar/share/login/lib/network.js:1:873)
+    at emitOne (events.js:96:13)
+    at ClientRequest.emit (events.js:191:7)
+    at TLSSocket.socketErrorListener (_http_client.js:358:9)
+    at emitOne (events.js:96:13)
+    at TLSSocket.emit (events.js:191:7)
+    at emitErrorNT (net.js:1283:8)
+    at _combinedTickCallback (internal/process/next_tick.js:80:11)
+    at process._tickDomainCallback (internal/process/next_tick.js:128:9)
+2018-04-16T14:34:39.497Z - error: Failed to reset layout: Error: Failed to close panel scene
+    at Object.Panel._unloadAll (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor-framework/lib/renderer/panel.js:1:2459)
+    at Async.waterfall.e (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor-framework/lib/renderer/ui/utils/dock-utils.js:1:8071)
+    at fn (/Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/async/lib/async.js:746:34)
+    at /Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/async/lib/async.js:1213:16
+    at /Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/async/lib/async.js:166:37
+    at /Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/async/lib/async.js:706:43
+    at /Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/async/lib/async.js:167:37
+    at Object.async.waterfall (/Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/async/lib/async.js:710:44)
+    at Object.DockUtils.reset (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor-framework/lib/renderer/ui/utils/dock-utils.js:1:8050)
+    at EventEmitter.ipcRenderer.on (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor-framework/lib/renderer/ui/utils/dock-utils.js:1:9933)
+    at DockUtils.reset.e (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor-framework/lib/renderer/ui/utils/dock-utils.js:1:9971)
+    at Async.waterfall.e (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor-framework/lib/renderer/ui/utils/dock-utils.js:1:9060)
+    at /Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/async/lib/async.js:52:16
+    at /Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/async/lib/async.js:696:30
+    at /Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/async/lib/async.js:167:37
+    at Immediate.<anonymous> (/Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/async/lib/async.js:1206:34)
+    at runCallback (timers.js:672:20)
+    at tryOnImmediate (timers.js:645:5)
+    at processImmediate [as _immediateCallback] (timers.js:617:5)
+2018-04-16T15:00:26.436Z - warn: Error: ipc timeout. message: scene:query-node, session: scene@renderer:34088
+2018-04-16T15:00:26.441Z - warn: Error: ipc timeout. message: scene:query-node, session: scene@renderer:34091
+2018-04-16T15:00:26.442Z - warn: Error: ipc timeout. message: scene:query-node, session: scene@renderer:34094
