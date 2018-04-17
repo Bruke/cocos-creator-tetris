@@ -14,7 +14,11 @@ cc.Class({
     onLoad: function () {
         //this.label.string = this.text;
         this.setTouchControl();
+
+        // 关闭调试信息
+        cc.director.setDisplayStats(false);
     },
+    
 
     setTouchControl: function () {
         this.background.on(cc.Node.EventType.TOUCH_START, function (event) {

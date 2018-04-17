@@ -20,6 +20,9 @@ cc.Class({
     onLoad: function onLoad() {
         //this.label.string = this.text;
         this.setTouchControl();
+
+        // 关闭调试信息
+        cc.director.setDisplayStats(false);
     },
 
     setTouchControl: function setTouchControl() {
