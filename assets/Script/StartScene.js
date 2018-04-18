@@ -25,7 +25,7 @@ cc.Class({
         }, this);
 
         this.background.on(cc.Node.EventType.TOUCH_END, function (event) {
-            // 切换场景
+            // test 切换场景
             cc.director.loadScene("gamescene", function () {
             });
         }, this);
