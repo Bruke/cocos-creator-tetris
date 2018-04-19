@@ -8,6 +8,17 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
+
+        // 构成形状的小元素块
+        brickPrefab: cc.Prefab,
+
+        // 构成每一种形状的小元素块对象集合
+        // 所有形状元素都是有四个小元素块构成的
+        bricks: {
+            default: [],
+            type: cc.Prefab
+        },
+
         // foo: {
         //     // ATTRIBUTES:
         //     default: null,        // The default value will be used only when the component attaching
@@ -26,12 +37,14 @@ cc.Class({
     },
 
     // LIFE-CYCLE CALLBACKS:
-
-    // onLoad () {},
-
-    start () {
-
+    
+    onLoad () {
     },
 
-    // update (dt) {},
+    start () {
+    },
+
+    update (dt) {
+
+    },
 });
