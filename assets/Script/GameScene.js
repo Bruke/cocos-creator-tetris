@@ -4,6 +4,25 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
+        labelHiScore: {
+            default: null,
+            type: cc.Node
+        },
+
+        labelCurScore: {
+            default: null,
+            type: cc.Node
+        },
+
+        labelLevel: {
+            default: null,
+            type: cc.Node
+        },
+
+        labelLines: {
+            default: null,
+            type: cc.Node
+        },
     },
 
     // LIFE-CYCLE CALLBACKS:

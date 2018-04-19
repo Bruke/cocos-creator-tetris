@@ -1,2 +1,3 @@
-# hello-world
-Hello world new project template.
+# cocos-creator-tetris
+
+A Tetris Game Made With Cocos Creator Project.
