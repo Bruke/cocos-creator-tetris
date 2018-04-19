@@ -1,3 +1,7 @@
+
+
+//window.tm = window.tm || {}
+
 cc.Class({
     extends: cc.Component,
 
@@ -17,6 +21,10 @@ cc.Class({
 
         // 关闭调试信息
         cc.director.setDisplayStats(false);
+
+        // Test Code
+        let rnd = tm.utils.getRandomInt(10);
+        let dict = tm.TetriminoDict.dict;
     },
     
 
