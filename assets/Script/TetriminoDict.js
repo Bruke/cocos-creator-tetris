@@ -2,13 +2,20 @@
 
 window.tm = window.tm || {};
 
-tm.TetriminoDict = {
+tm.Direction = cc.Enum({
+    Up:      0,
+    Down:    1,
+    Left:    2,
+    Right:   3
+});
 
-    /**
-     * 元素种类及各个变形信息定义
-     * @type {}
-     */
-    dict: [
+
+
+/**
+ * 元素种类及各个变形信息定义
+ * @type {}
+ */
+tm.TetriminoDict = [
 
         /**
          * 方块元素, 仅一种变化
@@ -251,5 +258,4 @@ tm.TetriminoDict = {
                 [0, 0, 0, 0]
             ]
         ]
-    ]
-};
+    ];

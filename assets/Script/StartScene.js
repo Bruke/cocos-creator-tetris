@@ -24,7 +24,7 @@ cc.Class({
 
         // Test Code
         let rnd = tm.utils.getRandomInt(10);
-        let dict = tm.TetriminoDict.dict;
+        let dict = tm.TetriminoDict;
     },
     
 
