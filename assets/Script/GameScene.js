@@ -64,30 +64,10 @@ cc.Class({
     onKeyDown: function (event) {
         switch(event.keyCode) {
             case cc.KEY.back:
-                //console.log('Press back key');
+                cc.log('Press back key');
                 break;
 
-            /**
-             *  同时支持w s a d字母键 和 up down left right 方向键
-             */
-            case cc.KEY.w:
-            case cc.KEY.up:
-                this.sendChangeDirectionCommand(tm.Direction.Up);
-                break;
-
-            case cc.KEY.s:
-            case cc.KEY.down:
-                this.sendChangeDirectionCommand(tm.Direction.Down);
-                break;
-
-            case cc.KEY.a:
-            case cc.KEY.left:
-                this.sendChangeDirectionCommand(tm.Direction.Left);
-                break;
-
-            case cc.KEY.f:
-            case cc.KEY.right:
-                this.sendChangeDirectionCommand(tm.Direction.Right);
+            default:
                 break;
         }
     },
@@ -95,18 +75,11 @@ cc.Class({
     onKeyUp: function (event) {
         switch(event.keyCode) {
             case cc.KEY.back: // 安卓系统下的退出键
-                //console.log('release back key');
+                cc.log('release back key');
                 //this._showExitPanel(true);
                 break;
 
-            case cc.KEY.space:
-                // 空格键  -- 旋转
-                this.sendRotateCommand();
-                break;
-
             default:
-                // 其他键统一处理为取消移动方向
-                this.cancelChangeDirectionCommand();
                 break;
         }
     },
@@ -118,29 +91,6 @@ cc.Class({
             //this._curScore += data.score;
             //this.updateGameScore();
         }
-    },
+    }
 
-    /**
-     * 发送旋转形状元素命令
-     */
-    sendRotateCommand () {
-        let event = new cc.Event.EventCustom('Rotate', true);
-        //event.setUserData({'item': this._lastStandGround});
-        cc.systemEvent.dispatchEvent(event);
-    },
-
-    /**
-     * 改变形状元素移动方向
-     * @param direction
-     */
-    sendChangeDirectionCommand (direction) {
-
-    },
-
-    /**
-     * 取消当前附加移动方向
-     */
-    cancelChangeDirectionCommand () {
-
-    },
 });
