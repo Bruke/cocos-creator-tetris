@@ -9,12 +9,17 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
+        brickCellPrefab: cc.Prefab,
+        tetriminoPrefab: cc.Prefab,
+
     },
 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
         this._curTetrimino = null;
+
+        this._gridMap = [];
 
         // 网格范围为 10 * 20
         this._gridSize = cc.size(10, 20);
@@ -24,6 +29,10 @@ cc.Class({
 
         this.registerKeyEvent();
         this.registerCustomEvent();
+
+        // Test
+        let tetrimino = cc.instantiate(this.tetriminoPrefab);
+        this.node.addChild(tetrimino);
     },
 
     onDestroy () {
@@ -35,11 +44,17 @@ cc.Class({
 
     },
 
+    /**
+     * 注册键盘事件
+     */
     registerKeyEvent () {
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
     },
 
+    /**
+     * 取消注册键盘事件
+     */
     unRegisterKeyEvent () {
         cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
         cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
@@ -51,7 +66,10 @@ cc.Class({
     unRegisterCustomEvent () {
     },
 
-    //
+    /**
+     * 游戏逻辑主循环
+     * @param dt
+     */
     update (dt) {
         if (!this._curTetrimino) {
             return;
@@ -96,7 +114,7 @@ cc.Class({
     onKeyUp: function (event) {
         switch(event.keyCode) {
             case cc.KEY.space:
-                // 空格键  -- 旋转
+                // 空格键  -- 旋转形状
                 this.sendRotateCommand();
                 break;
 
@@ -131,6 +149,125 @@ cc.Class({
 
     },
 
-    //
+    /**
+     * 删除已经填满的行
+     * @private
+     */
+    _removeAllCompletedLines () {
+        let removedCount = 0;
+
+        // 删除填满的行
+        this._gridMap = this._gridMap.filter(function (row) {
+            if (!this.rowIsCompleted(row)) {
+                return true;
+            }
+            removedCount++;
+            return false;
+        });
+
+        //
+        if (removedCount) {
+            // 播放消除音效
+
+            // 刷新得分
+            //cc.game.state.addPointsForRowsCount(removedCount);
+        }
+
+        // 重新生成该行网格数据
+        while (removedCount--) {
+            this._gridMap.push(this.createRow(this._gridSize.width));
+        }
+    },
+
+    /**
+     * 重新生成全部网格块元素
+     * @private
+     */
+    _rebuildAllGridBricks () {
+        // 先删除全部元素
+        this.removeAllChildren();
+
+        // 重新创建格子元素
+        let gridSize = this._gridSize;
+
+        for (let i = 0; i < gridSize.height; i++) {
+            for (let j = 0; j < gridSize.width; j++) {
+                if (!this._gridMap[i][j]) {
+                    continue;
+                }
+
+                let brickCell = cc.instantiate(this.brickCellPrefab);
+
+                brickCell.setPosition(
+                    j * brick_width * (1 + 0.5),
+                    i * brick_height
+                );
+                this.addChild(brickCell);
+            }
+        }
+    },
+
+    /**
+     * 刷新格子中所有的块元素
+     * @private
+     */
+    _updateGridBricks () {
+        //
+        this._removeAllCompletedLines();
+        this._rebuildAllGridBricks();
+    },
+
+    createBricksMap (width, height, level) {
+        let bricksMap = [];
+
+        for (let i = 0; i < height; i++) {
+            let rowHasBricks = i < level;
+            bricksMap.push(this.createRow(width, rowHasBricks));
+        }
+        return bricksMap;
+    },
+
+    rowIsCompleted (row) {
+        let ci = row.length;
+
+        while (ci--) {
+            if (!row[ci]) {
+                return false;
+            }
+        }
+        return true;
+    },
+
+    rowIsEmpty (row) {
+        let i = row.length;
+
+        while (i--) {
+            if (row[i]) {
+                return false;
+            }
+        }
+        return true;
+    },
+
+    colIsEmpty (bricksMap, col) {
+        let i = bricksMap.length;
+        while (i--) {
+            if (bricksMap[i][col]) {
+                return false;
+            }
+        }
+        return true;
+    },
+
+    createRow (width, needCreateBricks) {
+        let row = [];
+        let i = width;
+
+        while (i--) {
+            let hasBrick = needCreateBricks ? Math.round(Math.random()) : 0;
+            row.push(hasBrick);
+        }
+        return row;
+    },
 
 });

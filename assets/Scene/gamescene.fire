@@ -745,7 +745,13 @@
     "node": {
       "__id__": 16
     },
-    "_enabled": true
+    "_enabled": true,
+    "brickCellPrefab": {
+      "__uuid__": "6d96cadf-2eba-48f9-b445-ac0fbfc99dad"
+    },
+    "tetriminoPrefab": {
+      "__uuid__": "c0ea9ea3-3986-4af1-9d33-4a77dc53c966"
+    }
   },
   {
     "__type__": "cc.Node",
@@ -2042,9 +2048,6 @@
     },
     "labelLines": {
       "__id__": 12
-    },
-    "gridPanel": {
-      "__id__": 16
     }
   },
   {

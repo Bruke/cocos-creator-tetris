@@ -4,6 +4,12 @@
  * 俄罗斯方块中各种下落的形状元素统称Tetrimino
  */
 
+// 单个块元素宽高
+const brick_width  = 30;
+const brick_height = 30;
+
+const brick_cell_num = 4;
+
 cc.Class({
     extends: cc.Component,
 
@@ -23,9 +29,33 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
     
     onLoad () {
+        //
+
+        //
+        this.updateBricks();
     },
 
     start () {
+    },
+
+    updateBricks: function() {
+        //
+        this.node.removeAllChildren();
+
+        this.bricksMap = this.bricksPlan[this.rotationInd];
+        var row = brick_cell_num;
+
+        while (row--) {
+            for (let col = 0; col < brick_cell_num; col++) {
+                if (!this.bricksMap[row][col]) continue;
+                let brick = cc.instantiate(this.brickPrefab);
+                brick.setPosition(
+                    col * brick_width * (1 + 0.5),
+                    (brick_cell_num - row - 1) * brick_height
+                );
+                this.node.addChild(brick);
+            }
+        }
     },
 
     /**
