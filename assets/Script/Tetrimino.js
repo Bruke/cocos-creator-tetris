@@ -80,6 +80,15 @@ cc.Class({
      */
     update (dt) {
 
+        // Test Code
+        this._elapsedTime += dt;
+        if (this._elapsedTime >= this._fallWaitTime) {
+            this.bricksTpl  = tm.utils.randomArrayItems(tm.TetriminoDict)[0];
+            this._curRotateIdx = tm.utils.getRandomInt(this.bricksTpl.length);
+            this._elapsedTime = 0;
+        }
+        // End Test
+
         //
         this.updateBricks();
     },
