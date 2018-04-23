@@ -1,9 +1,5 @@
 
 
-// 单个块元素宽高
-const brick_width  = 30;
-const brick_height = 30;
-
 
 cc.Class({
     extends: cc.Component,
@@ -25,7 +21,7 @@ cc.Class({
         this._gridSize = cc.size(10, 20);
 
         // 设置网格节点宽高
-        this.node.setContentSize(brick_width * this._gridSize.width, brick_height * this._gridSize.height);
+        this.node.setContentSize(tm.brick_width * this._gridSize.width, tm.brick_height * this._gridSize.height);
 
         this.registerKeyEvent();
         this.registerCustomEvent();
@@ -199,8 +195,10 @@ cc.Class({
                 let brickCell = cc.instantiate(this.brickCellPrefab);
 
                 brickCell.setPosition(
-                    j * brick_width * (1 + 0.5),
-                    i * brick_height
+                    //j * tm.brick_width + tm.brick_width * 0.5,
+                    //i * tm.brick_height
+                    (j + 0.5) * tm.brick_width,
+                    (i - 0.5) * tm.brick_height
                 );
                 this.addChild(brickCell);
             }
@@ -217,6 +215,13 @@ cc.Class({
         this._rebuildAllGridBricks();
     },
 
+    /**
+     * 创建游戏格子地图
+     * @param width
+     * @param height
+     * @param level
+     * @returns {Array}
+     */
     createBricksMap (width, height, level) {
         let bricksMap = [];
 
@@ -227,6 +232,11 @@ cc.Class({
         return bricksMap;
     },
 
+    /**
+     * 检查指定行是否可以消除
+     * @param row
+     * @returns {boolean}
+     */
     rowIsCompleted (row) {
         let ci = row.length;
 

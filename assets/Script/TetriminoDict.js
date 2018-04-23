@@ -3,12 +3,19 @@
 window.tm = window.tm || {};
 
 tm.Direction = cc.Enum({
+    None:    9,
     Up:      0,
     Down:    1,
     Left:    2,
     Right:   3
 });
 
+// 单个块元素宽高
+tm.brick_width  = 46;
+tm.brick_height = 46;
+
+// 每个元素块包含4个基本块元素
+tm.brick_cell_num = 4;
 
 
 /**

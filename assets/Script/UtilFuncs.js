@@ -11,11 +11,15 @@ tm.utils = {
         return Math.floor(Math.random() * num)
     },
 
+    getRandomItem: function (arr) {
+        return arr[this.getRandomInt(arr.length)]
+    },
+
     /**
      * Randomly fetching a specified number of elements from an array
      * @param arr
      * @param count
-     * @returns {Array}
+     * @returns {Array}  注意: 这里返回的是一个数组
      */
     randomArrayItems: function (arr, count = 1) {
         //
