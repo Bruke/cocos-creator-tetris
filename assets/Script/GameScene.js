@@ -23,16 +23,38 @@ cc.Class({
             default: null,
             type: cc.Node
         },
+
+        rotateBtn: {
+            default: null,
+            type: cc.Node
+        },
+
+        speedBtn: {
+            default: null,
+            type: cc.Node
+        },
+
+        leftBtn: {
+            default: null,
+            type: cc.Node
+        },
+
+        rightBtn: {
+            default: null,
+            type: cc.Node
+        },
     },
 
     // LIFE-CYCLE CALLBACKS:
     onLoad () {
         this.registerKeyEvent();
+        this.registerTouchEvent();
         this.registerCustomEvent();
     },
 
     onDestroy () {
         this.unRegisterKeyEvent();
+        this.unRegisterTouchEvent();
         this.unRegisterCustomEvent();
     },
 
@@ -50,6 +72,21 @@ cc.Class({
     unRegisterKeyEvent () {
         cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
         cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
+    },
+
+    registerTouchEvent () {
+        this.rotateBtn.on(cc.Node.EventType.TOUCH_START, this.onBtnTouchBegan, this);
+        this.speedBtn.on(cc.Node.EventType.TOUCH_START,  this.onBtnTouchBegan, this);
+        this.leftBtn.on(cc.Node.EventType.TOUCH_START,   this.onBtnTouchBegan, this);
+        this.rightBtn.on(cc.Node.EventType.TOUCH_START,  this.onBtnTouchBegan, this);
+
+        this.rotateBtn.on(cc.Node.EventType.TOUCH_END, this.onBtnTouchEnd, this);
+        this.speedBtn.on(cc.Node.EventType.TOUCH_END,  this.onBtnTouchEnd, this);
+        this.leftBtn.on(cc.Node.EventType.TOUCH_END,   this.onBtnTouchEnd, this);
+        this.rightBtn.on(cc.Node.EventType.TOUCH_END,  this.onBtnTouchEnd, this);
+    },
+
+    unRegisterTouchEvent () {
     },
 
     registerCustomEvent () {
@@ -91,6 +128,80 @@ cc.Class({
             //this._curScore += data.score;
             //this.updateGameScore();
         }
-    }
+    },
+
+    // ---------------------------------- 按钮触摸事件处理 ----------------------------------------- //
+    onBtnTouchBegan (event) {
+        let direction = tm.Direction.None;
+
+        if (this.rotateBtn === event.target) {
+            direction = tm.Direction.Rotate;
+
+        } else if (this.speedBtn === event.target) {
+            direction = tm.Direction.Down;
+
+        } else if (this.leftBtn === event.target) {
+            direction = tm.Direction.Left;
+
+        } else if (this.rightBtn === event.target) {
+            direction = tm.Direction.Right;
+        }
+
+        if (direction !== tm.Direction.None) {
+            let msg = new cc.Event.EventCustom('ChangeDirection', true);
+            msg.setUserData({'direction': direction});
+            cc.systemEvent.dispatchEvent(msg);
+        }
+    },
+
+    onBtnTouchEnd (event) {
+        let msg = new cc.Event.EventCustom('CancelDirection', true);
+        cc.systemEvent.dispatchEvent(msg);
+    },
+
+    ///**
+    // * 旋转
+    // * @param event
+    // */
+    //onBtnRotate (event) {
+    //    let msg = new cc.Event.EventCustom('RotateShape', true);
+    //    cc.systemEvent.dispatchEvent(msg);
+    //},
+
+    ///**
+    // * 直接到底(暂不支持)
+    // * @param event
+    // */
+    //onBtnUp (event) {
+    //    let msg = new cc.Event.EventCustom('DownBottom', true);
+    //    cc.systemEvent.dispatchEvent(msg);
+    //},
+
+    ///**
+    // * 加速下落
+    // * @param event
+    // */
+    //onBtnDown (event) {
+    //    let msg = new cc.Event.EventCustom('SpeedUp', true);
+    //    cc.systemEvent.dispatchEvent(msg);
+    //},
+
+    ///**
+    // * 左移
+    // * @param event
+    // */
+    //onBtnLeft (event) {
+    //    let msg = new cc.Event.EventCustom('Leftward', true);
+    //    cc.systemEvent.dispatchEvent(msg);
+    //},
+
+    ///**
+    // * 右移
+    // * @param event
+    // */
+    //onBtnRight (event) {
+    //    let msg = new cc.Event.EventCustom('Rightward', true);
+    //    cc.systemEvent.dispatchEvent(msg);
+    //},
 
 });

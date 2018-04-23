@@ -1,5 +1,8 @@
 
-
+/**
+ * 游戏网格对象
+ * 游戏核心逻辑代码
+ */
 
 cc.Class({
     extends: cc.Component,
@@ -7,7 +10,6 @@ cc.Class({
     properties: {
         brickCellPrefab: cc.Prefab,
         tetriminoPrefab: cc.Prefab,
-
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -29,6 +31,8 @@ cc.Class({
         // Test
         let tetrimino = cc.instantiate(this.tetriminoPrefab);
         this.node.addChild(tetrimino);
+
+        this._curTetrimino = tetrimino.getComponent("Tetrimino");
     },
 
     onDestroy () {
@@ -57,9 +61,13 @@ cc.Class({
     },
 
     registerCustomEvent () {
+        cc.systemEvent.on('ChangeDirection',   this.onEvtChangeDirection, this);
+        cc.systemEvent.on('CancelDirection',   this.onEvtCancelDirection, this);
     },
 
     unRegisterCustomEvent () {
+        cc.systemEvent.off('ChangeDirection',   this.onEvtChangeDirection, this);
+        cc.systemEvent.off('CancelDirection',   this.onEvtCancelDirection, this);
     },
 
     /**
@@ -104,16 +112,16 @@ cc.Class({
             case cc.KEY.right:
                 this.sendChangeDirectionCommand(tm.Direction.Right);
                 break;
+
+            case cc.KEY.space:
+                // 空格键  -- 旋转形状
+                this.sendChangeDirectionCommand(tm.Direction.Rotate);
+                break;
         }
     },
 
     onKeyUp: function (event) {
         switch(event.keyCode) {
-            case cc.KEY.space:
-                // 空格键  -- 旋转形状
-                this.sendRotateCommand();
-                break;
-
             default:
                 // 其他键统一处理为取消移动方向
                 this.cancelChangeDirectionCommand();
@@ -121,28 +129,31 @@ cc.Class({
         }
     },
 
-    /**
-     * 发送旋转形状元素命令
-     */
-    sendRotateCommand () {
-        let event = new cc.Event.EventCustom('Rotate', true);
-        //event.setUserData({'item': this._lastStandGround});
-        cc.systemEvent.dispatchEvent(event);
+    // ---------------------------------- 自定义消息事件处理 ----------------------------------------- //
+    onEvtChangeDirection (event) {
+        //this._curTetrimino.rotateOnce();
+        let direction = event.detail.direction;
+        this.sendChangeDirectionCommand(direction);
     },
+
+    onEvtCancelDirection (event) {
+        this.cancelChangeDirectionCommand();
+    },
+
 
     /**
      * 改变形状元素移动方向
      * @param direction
      */
     sendChangeDirectionCommand (direction) {
-
+        this._curTetrimino.changeDirection(direction);
     },
 
     /**
      * 取消当前附加移动方向
      */
     cancelChangeDirectionCommand () {
-
+        this._curTetrimino.cancelDirection();
     },
 
     /**

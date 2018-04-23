@@ -36,17 +36,95 @@ cc.Class({
         // 当前图形显示数据
         this._curBricksData = [];
 
-        this._direction = tm.Direction.None;  // 玩家当前指定方向
-        this._isLocked  = false;  // 是否被锁定
-        this._speedUp   = false;  // 是否向下加速
+        // 玩家当前指定方向
+        this._direction = tm.Direction.None;
+
+        // 是否被锁定
+        this._isLocked  = false;
+
+        // 是否向下加速
+        this._speedUp   = false;
+
+        // 图形元素在10x20游戏网格中的矩阵坐标 x[0~10] y[0~20]
+        this._gridPosition = cc.p(0, 0);
 
         //
         this.node.setContentSize(tm.brick_width * tm.brick_cell_num, tm.brick_height * tm.brick_cell_num);
-
-        this.updateBricks();
     },
 
     start () {
+    },
+
+    /**
+     * 设置游戏网格坐标
+     * @param pos
+     */
+    setGridPos: function (pos) {
+
+    },
+
+    /**
+     * 检查是否为有效的网格坐标
+     * @param pos
+     * @returns {boolean}
+     */
+    isValidGridPos (pos) {
+        return true;
+    },
+
+    rotateOnce () {
+        this._curRotateIdx++;
+        this._curRotateIdx = this._curRotateIdx % this.bricksTpl.length;
+    },
+
+    moveRightOnce: function () {
+        var newPos = cc.pAdd(this._gridPosition, cc.p(1, 0));
+
+        if (this.isValidGridPos(newPos)) {
+            this.setGridPos(newPos);
+        }
+    },
+
+    moveLeftOnce: function () {
+        var newPos = cc.pSub(this._gridPosition, cc.p(1, 0));
+
+        if (this.isValidGridPos(newPos)) {
+            this.setGridPos(newPos);
+        }
+    },
+
+    moveDownOnce: function () {
+        if (this.canMoveDown()) {
+            var newPos = cc.pSub(this._gridPosition, cc.p(0, 1));
+            this.setGridPos(newPos);
+        }
+    },
+
+    canMoveDown: function () {
+        var newPos = cc.pSub(this._gridPosition, cc.p(0, 1));
+        return this.isValidGridPos(newPos);
+    },
+
+    startSpeedUp: function () {
+        this._speedUp = true;
+    },
+
+    stopSpeedUp: function () {
+        this._speedUp = false;
+    },
+
+    /**
+     * 改变运动方向或旋转状态
+     */
+    changeDirection (dir) {
+        this._direction = dir;
+    },
+
+    /**
+     * 取消运动或旋转状态
+     */
+    cancelDirection () {
+        this._direction = tm.Direction.None;
     },
 
     /**
@@ -79,17 +157,49 @@ cc.Class({
      * 处理形状元素自动下落
      */
     update (dt) {
+        //
+        //this.debugChangeTetrimino(dt);
 
-        // Test Code
+        switch (this._direction) {
+            case tm.Direction.Left:
+                this.moveLeftOnce();
+                break;
+
+            case tm.Direction.Right:
+                this.moveRightOnce();
+                break;
+
+            case tm.Direction.Down:
+                this.startSpeedUp();
+                break;
+
+            case tm.Direction.Rotate:
+                this.rotateOnce();
+                break;
+        }
+
+        // 如果当前出于下落加速状态, 则取消加速
+        if (this._direction === tm.Direction.Down) {
+            this.stopSpeedUp();
+        }
+
+        this._direction = tm.Direction.None;
+
+        // 刷新元素
+        this.updateBricks();
+    },
+
+    /**
+     * 测试代码, 变换形状元素
+     */
+    debugChangeTetrimino (dt) {
+        //
         this._elapsedTime += dt;
+
         if (this._elapsedTime >= this._fallWaitTime) {
             this.bricksTpl  = tm.utils.randomArrayItems(tm.TetriminoDict)[0];
             this._curRotateIdx = tm.utils.getRandomInt(this.bricksTpl.length);
             this._elapsedTime = 0;
         }
-        // End Test
-
-        //
-        this.updateBricks();
     },
 });

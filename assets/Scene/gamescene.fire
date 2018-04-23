@@ -1408,7 +1408,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "btnDown",
+    "_name": "btnSpeed",
     "_objFlags": 0,
     "_parent": {
       "__id__": 26
@@ -1902,6 +1902,18 @@
     },
     "labelLines": {
       "__id__": 16
+    },
+    "rotateBtn": {
+      "__id__": 27
+    },
+    "speedBtn": {
+      "__id__": 33
+    },
+    "leftBtn": {
+      "__id__": 36
+    },
+    "rightBtn": {
+      "__id__": 39
     }
   },
   {
