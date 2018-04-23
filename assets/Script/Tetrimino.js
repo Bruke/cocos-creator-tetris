@@ -32,7 +32,7 @@ cc.Class({
         //
 
         //
-        this.updateBricks();
+        //this.updateBricks();
     },
 
     start () {
