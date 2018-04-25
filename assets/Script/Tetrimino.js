@@ -9,6 +9,27 @@ cc.Class({
 
     properties: {
 
+        locked: {
+            get () {
+                return this._isLocked;
+            },
+            set (value) {
+                this._isLocked = !!value;
+            }
+        },
+
+        speedUp: {
+            get () {
+                return this._speedUp;
+            },
+            set (value) {
+                this._speedUp = !!value;
+            }
+        },
+
+        _isLocked: false, // 形状元素落地后锁定不能再移动
+        _speedUp: false,  // 按下向下键时加速下落
+
         // 构成形状的小元素块
         brickPrefab: cc.Prefab,
 
@@ -38,12 +59,6 @@ cc.Class({
 
         // 玩家当前指定方向
         this._direction = tm.Direction.None;
-
-        // 是否被锁定
-        this._isLocked  = false;
-
-        // 是否向下加速
-        this._speedUp   = false;
 
         // 图形元素在10x20游戏网格中的矩阵坐标 x[0~10] y[0~20]
         this._gridPosition = cc.p(0, 0);

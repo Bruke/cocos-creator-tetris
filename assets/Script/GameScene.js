@@ -68,7 +68,6 @@ cc.Class({
     },
 
     start () {
-        this.initNextTetrimino();  // Test Code
     },
 
     registerKeyEvent () {

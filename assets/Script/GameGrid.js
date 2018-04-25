@@ -81,7 +81,7 @@ cc.Class({
 
         this._curTetrimino.update(dt);
 
-        if (this._curTetrimino.isFrozen) {
+        if (this._curTetrimino.locked) {
             this._curTetrimino = null;
         }
     },
