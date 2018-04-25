@@ -24,6 +24,11 @@ cc.Class({
             type: cc.Node
         },
 
+        nodeNext: {
+            default: null,
+            type: cc.Node
+        },
+
         rotateBtn: {
             default: null,
             type: cc.Node
@@ -43,10 +48,14 @@ cc.Class({
             default: null,
             type: cc.Node
         },
+
+        tetriminoPrefab: cc.Prefab,
     },
 
     // LIFE-CYCLE CALLBACKS:
     onLoad () {
+        this._elapsedTime = 0;
+
         this.registerKeyEvent();
         this.registerTouchEvent();
         this.registerCustomEvent();
@@ -59,10 +68,8 @@ cc.Class({
     },
 
     start () {
-
+        this.initNextTetrimino();  // Test Code
     },
-
-    // update (dt) {},
 
     registerKeyEvent () {
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
@@ -95,6 +102,38 @@ cc.Class({
 
     unRegisterCustomEvent () {
         cc.systemEvent.off('AddScore',  this.onEvtAddScore, this);
+    },
+
+    initNextTetrimino () {
+        if (this._nextTetrimino) {
+            this._nextTetrimino.destroy();
+            this._nextTetrimino.removeFromParent();
+            this._nextTetrimino = null;
+        }
+
+        let tetrimino = cc.instantiate(this.tetriminoPrefab);
+        this.nodeNext.addChild(tetrimino);
+        //tetrimino.setPosition(223 + tet.width / 2, 70 + tet.height / 2);
+        this._nextTetrimino = tetrimino;
+    },
+
+    update (dt) {
+        this.debugChangeTetrimino(dt);
+    },
+
+    /**
+     * 测试代码, 变换形状元素
+     */
+    debugChangeTetrimino (dt) {
+        //
+        this._elapsedTime += dt;
+
+        if (this._elapsedTime >= 1) {
+            //
+            this.initNextTetrimino();
+
+            this._elapsedTime = 0;
+        }
     },
 
     // ------------------------------------- 键盘事件处理 ------------------------------------------ //
