@@ -174,6 +174,7 @@ cc.Class({
      * 旋转元素
      */
     rotateOnce () {
+        // 旋转后的索引和模板数据
         let rotateIndex = (this._curRotateIdx + 1) % this.bricksTpl.length;
         let rotatedBricksMap = this.bricksTpl[rotateIndex];
 
@@ -181,14 +182,15 @@ cc.Class({
         let canRotate = false;
 
         if (this.isValidGridPos(this._gridPosition, rotatedBricksMap)) {
+            // 周围无其他障碍物和边界, 可以直接旋转
             canRotate = true;
 
         } else {
-            //
+            // 边界检测
             var leftLedge = -(this._gridPosition.x + rotatedPaddings.left);
             var rightLedge = (this._gridPosition.x + tm.brick_cell_num - rotatedPaddings.right) - tm.grid_width;
             var correctToRightPos = cc.p(this._gridPosition.x + leftLedge, this._gridPosition.y);
-            var correctToLeftPos = {x: this._gridPosition.x - rightLedge, y: this._gridPosition.y};
+            var correctToLeftPos  = cc.p(this._gridPosition.x - rightLedge, this._gridPosition.y);
 
             if (leftLedge > 0 && this.isValidGridPos(correctToRightPos, rotatedBricksMap)) {
                 this.setGridPos(correctToRightPos);
@@ -200,6 +202,7 @@ cc.Class({
             }
         }
 
+        // 确定旋转
         if (canRotate) {
             this._curRotateIdx = rotateIndex;
         }
