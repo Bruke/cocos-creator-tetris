@@ -9,6 +9,7 @@ cc.Class({
 
     properties: {
 
+        // 落地后被锁定
         locked: {
             get () {
                 return this._isLocked;
@@ -18,6 +19,7 @@ cc.Class({
             }
         },
 
+        // 加速下落
         speedUp: {
             get () {
                 return this._speedUp;
@@ -27,6 +29,7 @@ cc.Class({
             }
         },
 
+        // 是否出于按下状态
         isTouchingDown: {
             get () {
                 return this._isTouchingDown;
@@ -127,10 +130,14 @@ cc.Class({
     /**
      * 检查是否为有效的网格坐标
      * @param gridPos
+     * @param bricksData
      * @returns {boolean}
      */
-    isValidGridPos (gridPos) {
-        let bricksData = this._curBricksData;
+    isValidGridPos (gridPos, bricksData) {
+        if (bricksData == void 0) {
+            bricksData = this._curBricksData;
+        }
+
         let row = tm.brick_cell_num;
 
         while (row--) {
@@ -153,55 +160,105 @@ cc.Class({
                 }
 
                 // 该位置网格上是否有其他元素
-                /*
-                let isCollideWithOtherBrick = this.grid.bricksMap[cellGridPos.y][cellGridPos.x];
-                if (isCollideWithOtherBrick) {
-                    return false;
-                }
-                */
+                //let isCollideWithOtherBrick = this.grid.bricksMap[cellGridPos.y][cellGridPos.x];
+                //if (isCollideWithOtherBrick) {
+                //    return false;
+                //}
             }
         }
 
         return true;
     },
 
+    /**
+     * 旋转元素
+     */
     rotateOnce () {
-        this._curRotateIdx++;
-        this._curRotateIdx = this._curRotateIdx % this.bricksTpl.length;
+        let rotateIndex = (this._curRotateIdx + 1) % this.bricksTpl.length;
+        let rotatedBricksMap = this.bricksTpl[rotateIndex];
+
+        let rotatedPaddings = tm.getTetriPaddings(rotatedBricksMap);
+        let canRotate = false;
+
+        if (this.isValidGridPos(this._gridPosition, rotatedBricksMap)) {
+            canRotate = true;
+
+        } else {
+            //
+            var leftLedge = -(this._gridPosition.x + rotatedPaddings.left);
+            var rightLedge = (this._gridPosition.x + tm.brick_cell_num - rotatedPaddings.right) - tm.grid_width;
+            var correctToRightPos = cc.p(this._gridPosition.x + leftLedge, this._gridPosition.y);
+            var correctToLeftPos = {x: this._gridPosition.x - rightLedge, y: this._gridPosition.y};
+
+            if (leftLedge > 0 && this.isValidGridPos(correctToRightPos, rotatedBricksMap)) {
+                this.setGridPos(correctToRightPos);
+                canRotate = true;
+
+            } else if (rightLedge > 0 && this.isValidGridPos(correctToLeftPos, rotatedBricksMap)) {
+                this.setGridPos(correctToLeftPos);
+                canRotate = true;
+            }
+        }
+
+        if (canRotate) {
+            this._curRotateIdx = rotateIndex;
+        }
+
+        //this._curRotateIdx++;
+        //this._curRotateIdx = this._curRotateIdx % this.bricksTpl.length;
     },
 
+    /**
+     * 右移一格
+     */
     moveRightOnce: function () {
-        var newPos = cc.pAdd(this._gridPosition, cc.p(1, 0));
+        let newPos = cc.pAdd(this._gridPosition, cc.p(1, 0));
 
         if (this.isValidGridPos(newPos)) {
             this.setGridPos(newPos);
         }
     },
 
+    /**
+     * 左移一格
+     */
     moveLeftOnce: function () {
-        var newPos = cc.pSub(this._gridPosition, cc.p(1, 0));
+        let newPos = cc.pSub(this._gridPosition, cc.p(1, 0));
 
         if (this.isValidGridPos(newPos)) {
             this.setGridPos(newPos);
         }
     },
 
+    /**
+     * 下落一格
+     */
     moveDownOnce: function () {
         if (this.canMoveDown()) {
-            var newPos = cc.pSub(this._gridPosition, cc.p(0, 1));
+            let newPos = cc.pSub(this._gridPosition, cc.p(0, 1));
             this.setGridPos(newPos);
         }
     },
 
+    /**
+     * 是否可以继续下落
+     * @returns {*|boolean}
+     */
     canMoveDown: function () {
-        var newPos = cc.pSub(this._gridPosition, cc.p(0, 1));
+        let newPos = cc.pSub(this._gridPosition, cc.p(0, 1));
         return this.isValidGridPos(newPos);
     },
 
+    /**
+     * 激活加速
+     */
     startSpeedUp: function () {
         this._speedUp = true;
     },
 
+    /**
+     * 取消加速
+     */
     stopSpeedUp: function () {
         this._speedUp = false;
     },
@@ -235,7 +292,7 @@ cc.Class({
 
         this._curBricksData = this.bricksTpl[this._curRotateIdx];
 
-        var row = tm.brick_cell_num;
+        let row = tm.brick_cell_num;
 
         while (row--) {
             for (let col = 0; col < tm.brick_cell_num; col++) {
@@ -252,6 +309,10 @@ cc.Class({
         }
     },
 
+    /**
+     * 刷新元素移动方向
+     * @param dt
+     */
     updateDirection (dt) {
         //
         if (!this._isTouchingDown) {
@@ -295,6 +356,10 @@ cc.Class({
         // 刷新方向
         this.updateDirection(dt);
 
+        //
+
+
+        // 是否加速下落
         if (this._speedUp) {
             this.moveDownOnce();
         }

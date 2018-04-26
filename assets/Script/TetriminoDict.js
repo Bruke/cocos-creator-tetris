@@ -16,16 +16,19 @@ tm.grid_width = 10;
 tm.grid_height = 20;
 
 // 单个块元素宽高
-tm.brick_width  = 46;
-tm.brick_height = 46;
+tm.brick_width  = 47;
+tm.brick_height = 47;
 
 // 每个元素块包含4个基本块元素
 tm.brick_cell_num = 4;
 
 
+// 游戏网格实例对象
+tm.gameGridInstance = null;
+
 /**
  * 元素种类及各个变形信息定义
- * @type {}
+ * @type []
  */
 tm.TetriminoDict = [
     /**
@@ -271,24 +274,43 @@ tm.TetriminoDict = [
     ]
 ];
 
+/**
+ *
+ * @param bricksMap
+ * @returns {*}
+ */
 tm.getTetriPaddings = function(bricksMap) {
-    var paddings = {top: 0, right: 0, left: 0};
-    var row = tm.brick_cell_num;
+    if (!tm.gameGridInstance) {
+        return null;
+    }
+
+    let gameGrid = tm.gameGridInstance;
+
+    let paddings = {top: 0, right: 0, left: 0};
+    let row = tm.brick_cell_num;
 
     while (row--) {
-        if (!Grid.rowIsEmpty(bricksMap[row])) break;
+        if (!gameGrid.rowIsEmpty(bricksMap[row])) {
+            break;
+        }
         paddings.top++;
     }
 
-    for (var i = 0; i < Tetrimino.SIZE; i++) {
-        if (!Grid.colIsEmpty(bricksMap, i)) break;
+    for (let i = 0; i < tm.brick_cell_num; i++) {
+        if (!gameGrid.colIsEmpty(bricksMap, i)) {
+            break;
+        }
         paddings.left++;
     }
 
-    var col = tm.brick_cell_num;
+    let col = tm.brick_cell_num;
+
     while (col--) {
-        if (!Grid.colIsEmpty(bricksMap, col)) break;
+        if (!gameGrid.colIsEmpty(bricksMap, col)) {
+            break;
+        }
         paddings.right++;
     }
+
     return paddings;
 };

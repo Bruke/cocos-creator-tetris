@@ -25,6 +25,9 @@ cc.Class({
         this.registerKeyEvent();
         this.registerCustomEvent();
 
+        //
+        tm.gameGridInstance = this;
+
         // Test
         let tetrimino = cc.instantiate(this.tetriminoPrefab);
         this.node.addChild(tetrimino);
