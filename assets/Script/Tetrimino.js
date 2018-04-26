@@ -349,6 +349,36 @@ cc.Class({
         }
     },
 
+    /**
+     * 处理元素正常下落
+     * @param dt
+     */
+    updateMoveDown (dt) {
+        this._fallElapsedTime += dt;
+
+        if (this._fallElapsedTime >= this._fallWaitTime) {
+            this._fallElapsedTime = 0;
+
+            if (this.canMoveDown()) {
+                this.moveDownOnce();
+
+            } else {
+                this._isLocked = true;
+            }
+        }
+    },
+
+    /**
+     * 加速下落处理
+     * @param dt
+     */
+    updateSpeedUp (dt) {
+        // 如果加速下落就再多下一格
+        if (this._speedUp) {
+            this.moveDownOnce();
+        }
+    },
+
 
     /**
      * 处理形状元素自动下落
@@ -359,13 +389,11 @@ cc.Class({
         // 刷新方向
         this.updateDirection(dt);
 
-        //
+        // 正常下落
+        this.updateMoveDown(dt);
 
-
-        // 是否加速下落
-        if (this._speedUp) {
-            this.moveDownOnce();
-        }
+        // 加速下落
+        this.updateSpeedUp(dt);
 
         // 刷新元素
         this.updateBricks();

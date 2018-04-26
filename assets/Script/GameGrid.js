@@ -145,16 +145,20 @@ cc.Class({
      * @param direction
      */
     sendChangeDirectionCommand (direction) {
-        this._curTetrimino.isTouchingDown = true;
-        this._curTetrimino.changeDirection(direction);
+        if (this._curTetrimino) {
+            this._curTetrimino.isTouchingDown = true;
+            this._curTetrimino.changeDirection(direction);
+        }
     },
 
     /**
      * 取消当前附加移动方向
      */
     cancelChangeDirectionCommand () {
-        this._curTetrimino.isTouchingDown = false;
-        this._curTetrimino.cancelDirection();
+        if (this._curTetrimino) {
+            this._curTetrimino.isTouchingDown = false;
+            this._curTetrimino.cancelDirection();
+        }
     },
 
     /**
