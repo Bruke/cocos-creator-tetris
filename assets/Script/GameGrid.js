@@ -19,11 +19,8 @@ cc.Class({
 
         this._gridMap = [];
 
-        // 网格范围为 10 * 20
-        this._gridSize = cc.size(10, 20);
-
         // 设置网格节点宽高
-        this.node.setContentSize(tm.brick_width * this._gridSize.width, tm.brick_height * this._gridSize.height);
+        this.node.setContentSize(tm.brick_width * tm.grid_width, tm.brick_height * tm.grid_height);
 
         this.registerKeyEvent();
         this.registerCustomEvent();
@@ -31,8 +28,9 @@ cc.Class({
         // Test
         let tetrimino = cc.instantiate(this.tetriminoPrefab);
         this.node.addChild(tetrimino);
-
         this._curTetrimino = tetrimino.getComponent("Tetrimino");
+        // 定位到出生点
+        this._curTetrimino.initToBornPosition();
     },
 
     onDestroy () {
@@ -182,7 +180,7 @@ cc.Class({
 
         // 重新生成该行网格数据
         while (removedCount--) {
-            this._gridMap.push(this.createRow(this._gridSize.width));
+            this._gridMap.push(this.createRow(tm.grid_width));
         }
     },
 
@@ -195,10 +193,8 @@ cc.Class({
         this.removeAllChildren();
 
         // 重新创建格子元素
-        let gridSize = this._gridSize;
-
-        for (let i = 0; i < gridSize.height; i++) {
-            for (let j = 0; j < gridSize.width; j++) {
+        for (let i = 0; i < tm.grid_height; i++) {
+            for (let j = 0; j < tm.grid_width; j++) {
                 if (!this._gridMap[i][j]) {
                     continue;
                 }

@@ -73,16 +73,21 @@ cc.Class({
         // 当前图形显示数据
         this._curBricksData = [];
 
-
-
         // 玩家当前指定方向
         this._direction = tm.Direction.None;
 
         // 图形元素在10x20游戏网格中的矩阵坐标 x[0~10] y[0~20]
         this._gridPosition = cc.p(0, 0);
 
+        // 图形在网格矩阵中的出生位置, 上方居中
+        this._bornGridPos = cc.p(3, 16);  // 形状元素左下角在网格中的位置坐标
+
         //
         this.node.setContentSize(tm.brick_width * tm.brick_cell_num, tm.brick_height * tm.brick_cell_num);
+
+        // debug
+        //let action = cc.repeatForever(cc.rotateBy(3, 360));
+        //this.node.runAction(action);
     },
 
     start () {
@@ -90,18 +95,73 @@ cc.Class({
 
     /**
      * 设置游戏网格坐标
-     * @param pos
+     * @param pos 形状元素左下角在网格中的位置坐标
      */
     setGridPos: function (pos) {
+        if (pos === void 0 || pos.x === void 0 || pos.y === void 0) {
+            return;
+        }
 
+        this._gridPosition.x = pos.x;
+        this._gridPosition.y = pos.y;
+
+        let size = this.node.getContentSize();
+
+        // 形状元素锚点为(0.5, 0.5), 要加上自身宽高的一半
+        //let x = this._gridPosition.x * tm.brick_width + size.width / 2;
+        //let y = this._gridPosition.y * tm.brick_height + size.height / 2;
+
+        let x = this._gridPosition.x * tm.brick_width;
+        let y = this._gridPosition.y * tm.brick_height;
+
+        this.node.setPosition(cc.p(x, y));
+    },
+
+    /**
+     * 初始化到出生点位置
+     */
+    initToBornPosition () {
+        this.setGridPos(this._bornGridPos);
     },
 
     /**
      * 检查是否为有效的网格坐标
-     * @param pos
+     * @param gridPos
      * @returns {boolean}
      */
-    isValidGridPos (pos) {
+    isValidGridPos (gridPos) {
+        let bricksData = this._curBricksData;
+        let row = tm.brick_cell_num;
+
+        while (row--) {
+            for (let col = 0; col < tm.brick_cell_num; col++) {
+                if (!bricksData[row][col]) {
+                    continue;
+                }
+
+                let cellGridPos = cc.p(gridPos.x + col, gridPos.y + tm.brick_cell_num - row - 1);
+
+                let outOfBounds = (
+                    cellGridPos.y < 0 || cellGridPos.x < 0 ||
+                    cellGridPos.x >= tm.grid_width ||
+                    cellGridPos.y >= tm.grid_height
+                );
+
+                // 是否出了网格边界
+                if (outOfBounds) {
+                    return false;
+                }
+
+                // 该位置网格上是否有其他元素
+                /*
+                let isCollideWithOtherBrick = this.grid.bricksMap[cellGridPos.y][cellGridPos.x];
+                if (isCollideWithOtherBrick) {
+                    return false;
+                }
+                */
+            }
+        }
+
         return true;
     },
 
