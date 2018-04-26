@@ -27,6 +27,16 @@ cc.Class({
             }
         },
 
+        isTouchingDown: {
+            get () {
+                return this._isTouchingDown;
+            },
+            set (value) {
+                this._isTouchingDown = !!value;
+            }
+        },
+
+        _isTouchingDown: false, // 当前是否出于按下状态
         _isLocked: false, // 形状元素落地后锁定不能再移动
         _speedUp: false,  // 按下向下键时加速下落
 
@@ -46,7 +56,13 @@ cc.Class({
     onLoad () {
         //
         this._fallWaitTime = 0.5;  // 元素块下落、停顿间隔时间
-        this._elapsedTime = this._fallWaitTime; // 累积时间
+        this._fallElapsedTime = 0; // 下落累积时间
+
+        // 当长按旋转键时, 连续两次变换间隔时间
+        this._changeActionInterval = 0.1;
+
+        // 旋转累积时间
+        this._changeElapsedTime = -1;
 
         // 随机选择一个图形模版
         this.bricksTpl  = tm.utils.randomArrayItems(tm.TetriminoDict)[0];
@@ -56,6 +72,8 @@ cc.Class({
 
         // 当前图形显示数据
         this._curBricksData = [];
+
+
 
         // 玩家当前指定方向
         this._direction = tm.Direction.None;
@@ -139,6 +157,12 @@ cc.Class({
      * 取消运动或旋转状态
      */
     cancelDirection () {
+        // 如果当前出于下落加速状态, 则取消加速
+        if (!this._isTouchingDown && this._direction === tm.Direction.Down) {
+            this.stopSpeedUp();
+        }
+
+        this._changeElapsedTime = -1;
         this._direction = tm.Direction.None;
     },
 
@@ -168,13 +192,20 @@ cc.Class({
         }
     },
 
-    /**
-     * 处理形状元素自动下落
-     */
-    update (dt) {
+    updateDirection (dt) {
         //
-        //this.debugChangeTetrimino(dt);
+        if (!this._isTouchingDown) {
+            return;
+        }
 
+        if (this._changeElapsedTime !== -1 && this._changeElapsedTime < this._changeActionInterval) {
+            this._changeElapsedTime += dt;
+            return;
+        }
+
+        this._changeElapsedTime = 0;
+
+        //
         switch (this._direction) {
             case tm.Direction.Left:
                 this.moveLeftOnce();
@@ -192,13 +223,21 @@ cc.Class({
                 this.rotateOnce();
                 break;
         }
+    },
 
-        // 如果当前出于下落加速状态, 则取消加速
-        if (this._direction === tm.Direction.Down) {
-            this.stopSpeedUp();
+
+    /**
+     * 处理形状元素自动下落
+     */
+    update (dt) {
+        //
+
+        // 刷新方向
+        this.updateDirection(dt);
+
+        if (this._speedUp) {
+            this.moveDownOnce();
         }
-
-        this._direction = tm.Direction.None;
 
         // 刷新元素
         this.updateBricks();

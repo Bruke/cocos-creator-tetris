@@ -79,8 +79,6 @@ cc.Class({
             return;
         }
 
-        this._curTetrimino.update(dt);
-
         if (this._curTetrimino.locked) {
             this._curTetrimino = null;
         }
@@ -146,6 +144,7 @@ cc.Class({
      * @param direction
      */
     sendChangeDirectionCommand (direction) {
+        this._curTetrimino.isTouchingDown = true;
         this._curTetrimino.changeDirection(direction);
     },
 
@@ -153,6 +152,7 @@ cc.Class({
      * 取消当前附加移动方向
      */
     cancelChangeDirectionCommand () {
+        this._curTetrimino.isTouchingDown = false;
         this._curTetrimino.cancelDirection();
     },
 
