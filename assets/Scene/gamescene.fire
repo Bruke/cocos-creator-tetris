@@ -1987,7 +1987,7 @@
     "_volume": 1,
     "_mute": false,
     "_loop": true,
-    "playOnLoad": true,
-    "preload": true
+    "playOnLoad": false,
+    "preload": false
   }
 ]

@@ -34,7 +34,7 @@ cc.Class({
     // onLoad () {},
 
     start () {
-
+        //this.node.runAction(cc.repeatForever(cc.rotateBy(3, 360)));
     },
 
     // update (dt) {},

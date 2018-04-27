@@ -4,6 +4,7 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
+        //
         labelHiScore: {
             default: null,
             type: cc.Node
@@ -59,6 +60,9 @@ cc.Class({
         this.registerKeyEvent();
         this.registerTouchEvent();
         this.registerCustomEvent();
+
+        //
+        tm.gameSceneInstance = this;
     },
 
     onDestroy () {
@@ -68,6 +72,7 @@ cc.Class({
     },
 
     start () {
+        this.initNextTetrimino();
     },
 
     registerKeyEvent () {
@@ -111,13 +116,21 @@ cc.Class({
         }
 
         let tetrimino = cc.instantiate(this.tetriminoPrefab);
+        let tetriComp = tetrimino.getComponent("Tetrimino");
+        tetriComp.locked = true;
+
         this.nodeNext.addChild(tetrimino);
-        //tetrimino.setPosition(223 + tet.width / 2, 70 + tet.height / 2);
         this._nextTetrimino = tetrimino;
+
+        return tetriComp;
+    },
+
+    getNextTetrimino () {
+        return this._nextTetrimino;
     },
 
     update (dt) {
-        this.debugChangeTetrimino(dt);
+        //this.debugChangeTetrimino(dt);
     },
 
     /**
@@ -139,7 +152,6 @@ cc.Class({
     onKeyDown: function (event) {
         switch(event.keyCode) {
             case cc.KEY.back:
-                cc.log('Press back key');
                 break;
 
             default:
@@ -150,7 +162,6 @@ cc.Class({
     onKeyUp: function (event) {
         switch(event.keyCode) {
             case cc.KEY.back: // 安卓系统下的退出键
-                cc.log('release back key');
                 //this._showExitPanel(true);
                 break;
 

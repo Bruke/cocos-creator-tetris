@@ -12,12 +12,16 @@ cc.Class({
         tetriminoPrefab: cc.Prefab,
     },
 
+
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
         this._curTetrimino = null;
 
-        this._gridMap = [];
+        this._gameState = tm.GameStatus.Ready;
+
+        // 网格中地块Cell元素二纬数组
+        this._gridBricksMap = [];
 
         // 设置网格节点宽高
         this.node.setContentSize(tm.brick_width * tm.grid_width, tm.brick_height * tm.grid_height);
@@ -27,13 +31,6 @@ cc.Class({
 
         //
         tm.gameGridInstance = this;
-
-        // Test
-        let tetrimino = cc.instantiate(this.tetriminoPrefab);
-        this.node.addChild(tetrimino);
-        this._curTetrimino = tetrimino.getComponent("Tetrimino");
-        // 定位到出生点
-        this._curTetrimino.initToBornPosition();
     },
 
     onDestroy () {
@@ -42,7 +39,7 @@ cc.Class({
     },
 
     start () {
-
+        this.gameStart();
     },
 
     /**
@@ -69,20 +66,6 @@ cc.Class({
     unRegisterCustomEvent () {
         cc.systemEvent.off('ChangeDirection',   this.onEvtChangeDirection, this);
         cc.systemEvent.off('CancelDirection',   this.onEvtCancelDirection, this);
-    },
-
-    /**
-     * 游戏逻辑主循环
-     * @param dt
-     */
-    update (dt) {
-        if (!this._curTetrimino) {
-            return;
-        }
-
-        if (this._curTetrimino.locked) {
-            this._curTetrimino = null;
-        }
     },
 
 
@@ -140,6 +123,96 @@ cc.Class({
     },
 
 
+    // --------------------------------------------------------------------------------------------- //
+    setGameLevel (level) {
+        if (level === void 0) {
+            level = 0;
+        }
+
+        this._level = level;
+        this._gridBricksMap = this.createBricksMap(tm.grid_width, tm.grid_height, level);
+        this._curTetrimino = null;
+        this._updateGridBricks();
+    },
+
+    getGridBricksMap () {
+        return this._gridBricksMap;
+    },
+
+    setGameState (state) {
+        this._gameState = state;
+    },
+
+    getGameState () {
+        return this._gameState;
+    },
+
+    /**
+     * 开始游戏
+     */
+    gameStart () {
+        //
+        this.setGameLevel(1);
+        this.setGameState(tm.GameStatus.Running);
+        this.createNextTetrimino();
+    },
+
+    /**
+     * 获取下一个要显示的形状元素
+     */
+    createNextTetrimino () {
+        //
+        let sceneNextTetri = tm.gameSceneInstance.getNextTetrimino();
+        let newTetrimino = cc.instantiate(this.tetriminoPrefab);
+        let newTetriComp  = newTetrimino.getComponent("Tetrimino");
+
+        newTetriComp.initWithTetrimino(sceneNextTetri.getComponent("Tetrimino"));
+
+        this.node.addChild(newTetrimino);
+        this._curTetrimino = newTetriComp;
+
+        // 定位到出生点
+        this._curTetrimino.initToBornPosition();
+    },
+
+    /**
+     * 将落地已被锁定到图形元素添加到网格中
+     * @param tetrimino
+     */
+    addLockedTetrimino: function (tetrimino) {
+        //
+        let row = tm.brick_cell_num;
+        while (row--) {
+            for (let col = 0; col < tm.brick_cell_num; col++) {
+                let bricksData = tetrimino.getBricksData();
+                if (!bricksData[row][col]) {
+                    continue;
+                }
+
+                let tetriGridPos = tetrimino.getGridPos();
+                let gridPos = cc.p(tetriGridPos.x + col, tetriGridPos.y + (tm.brick_cell_num - row - 1));
+                this._gridBricksMap[gridPos.y][gridPos.x] = 1;
+            }
+        }
+
+        //
+        this._updateGridBricks();
+
+        // 检查游戏是否结束
+        var gameOver = !this.isRowEmpty(this._gridBricksMap[tm.grid_height - 2]);  // 上方元素出生位置
+        if (gameOver) {
+            // 游戏结束
+            this._gameState = tm.GameStatus.GameOver;
+
+        } else {
+            // 创建下一个下落形状元素
+            this.createNextTetrimino();
+
+            // 继续生成下一个预览元素
+            tm.gameSceneInstance.initNextTetrimino();
+        }
+    },
+
     /**
      * 改变形状元素移动方向
      * @param direction
@@ -169,13 +242,13 @@ cc.Class({
         let removedCount = 0;
 
         // 删除填满的行
-        this._gridMap = this._gridMap.filter(function (row) {
-            if (!this.rowIsCompleted(row)) {
+        this._gridBricksMap = this._gridBricksMap.filter(function (row) {
+            if (!this.isRowCompleted(row)) {
                 return true;
             }
             removedCount++;
             return false;
-        });
+        }, this);
 
         //
         if (removedCount) {
@@ -187,7 +260,7 @@ cc.Class({
 
         // 重新生成该行网格数据
         while (removedCount--) {
-            this._gridMap.push(this.createRow(tm.grid_width));
+            this._gridBricksMap.push(this.createRow(tm.grid_width));
         }
     },
 
@@ -197,12 +270,12 @@ cc.Class({
      */
     _rebuildAllGridBricks () {
         // 先删除全部元素
-        this.removeAllChildren();
+        this.node.removeAllChildren();
 
         // 重新创建格子元素
         for (let i = 0; i < tm.grid_height; i++) {
             for (let j = 0; j < tm.grid_width; j++) {
-                if (!this._gridMap[i][j]) {
+                if (!this._gridBricksMap[i][j]) {
                     continue;
                 }
 
@@ -212,9 +285,9 @@ cc.Class({
                     //j * tm.brick_width + tm.brick_width * 0.5,
                     //i * tm.brick_height
                     (j + 0.5) * tm.brick_width,
-                    (i - 0.5) * tm.brick_height
+                    (i + 0.5) * tm.brick_height
                 );
-                this.addChild(brickCell);
+                this.node.addChild(brickCell);
             }
         }
     },
@@ -251,9 +324,8 @@ cc.Class({
      * @param row
      * @returns {boolean}
      */
-    rowIsCompleted (row) {
+    isRowCompleted (row) {
         let ci = row.length;
-
         while (ci--) {
             if (!row[ci]) {
                 return false;
@@ -262,9 +334,8 @@ cc.Class({
         return true;
     },
 
-    rowIsEmpty (row) {
+    isRowEmpty (row) {
         let i = row.length;
-
         while (i--) {
             if (row[i]) {
                 return false;
@@ -273,7 +344,7 @@ cc.Class({
         return true;
     },
 
-    colIsEmpty (bricksMap, col) {
+    isColEmpty (bricksMap, col) {
         let i = bricksMap.length;
         while (i--) {
             if (bricksMap[i][col]) {
@@ -292,6 +363,24 @@ cc.Class({
             row.push(hasBrick);
         }
         return row;
+    },
+
+    /**
+     * 游戏逻辑主循环
+     * @param dt
+     */
+    update (dt) {
+        if (this._gameState !== tm.GameStatus.Running) {
+            return;
+        }
+
+        if (!this._curTetrimino) {
+            return;
+        }
+
+        if (this._curTetrimino.locked) {
+            this._curTetrimino = null;
+        }
     },
 
 });

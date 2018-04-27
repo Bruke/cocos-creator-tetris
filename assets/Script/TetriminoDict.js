@@ -2,6 +2,17 @@
 
 window.tm = window.tm || {};
 
+/**
+ * 游戏状态
+ * @type {{Ready: number, Running: number, Paused: number, GameOver: number}}
+ */
+tm.GameStatus = cc.Enum({
+    Ready:      0,  // 准备就绪
+    Running:    1,  // 游戏中
+    Paused:     2,  // 暂停
+    GameOver:   3   // 游戏结束
+});
+
 tm.Direction = cc.Enum({
     None:    9,
     Up:      0,
@@ -22,6 +33,9 @@ tm.brick_height = 47;
 // 每个元素块包含4个基本块元素
 tm.brick_cell_num = 4;
 
+
+// 游戏场景实例对象
+tm.gameSceneInstance = null;
 
 // 游戏网格实例对象
 tm.gameGridInstance = null;
@@ -285,19 +299,18 @@ tm.getTetriPaddings = function(bricksMap) {
     }
 
     let gameGrid = tm.gameGridInstance;
-
     let paddings = {top: 0, right: 0, left: 0};
     let row = tm.brick_cell_num;
 
     while (row--) {
-        if (!gameGrid.rowIsEmpty(bricksMap[row])) {
+        if (!gameGrid.isRowEmpty(bricksMap[row])) {
             break;
         }
         paddings.top++;
     }
 
     for (let i = 0; i < tm.brick_cell_num; i++) {
-        if (!gameGrid.colIsEmpty(bricksMap, i)) {
+        if (!gameGrid.isColEmpty(bricksMap, i)) {
             break;
         }
         paddings.left++;
@@ -306,7 +319,7 @@ tm.getTetriPaddings = function(bricksMap) {
     let col = tm.brick_cell_num;
 
     while (col--) {
-        if (!gameGrid.colIsEmpty(bricksMap, col)) {
+        if (!gameGrid.isColEmpty(bricksMap, col)) {
             break;
         }
         paddings.right++;

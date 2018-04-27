@@ -43,6 +43,8 @@ cc.Class({
         _isLocked: false, // 形状元素落地后锁定不能再移动
         _speedUp: false,  // 按下向下键时加速下落
 
+        _isInitedWithTetrimino: false, // 是否从其他图形元素初始化
+
         // 构成形状的小元素块
         brickPrefab: cc.Prefab,
 
@@ -67,11 +69,13 @@ cc.Class({
         // 旋转累积时间
         this._changeElapsedTime = -1;
 
-        // 随机选择一个图形模版
-        this.bricksTpl  = tm.utils.randomArrayItems(tm.TetriminoDict)[0];
+        if ( !this._isInitedWithTetrimino ) {
+            // 随机选择一个图形模版
+            this.bricksTpl = tm.utils.randomArrayItems(tm.TetriminoDict)[0];
 
-        // 随机当前模版旋转位置
-        this._curRotateIdx = tm.utils.getRandomInt(this.bricksTpl.length);
+            // 随机当前模版旋转位置
+            this._curRotateIdx = tm.utils.getRandomInt(this.bricksTpl.length);
+        }
 
         // 当前图形显示数据
         this._curBricksData = [];
@@ -88,19 +92,46 @@ cc.Class({
         //
         this.node.setContentSize(tm.brick_width * tm.brick_cell_num, tm.brick_height * tm.brick_cell_num);
 
-        // debug
-        //let action = cc.repeatForever(cc.rotateBy(3, 360));
-        //this.node.runAction(action);
+        // 先刷新一下, 立即显示
+        this.updateBricks();
     },
 
     start () {
+    },
+
+    getBricksTemplate () {
+        return this.bricksTpl;
+    },
+
+    getBricksData () {
+        return this._curBricksData;
+    },
+
+    getCurrentRotateIndex () {
+        return this._curRotateIdx;
+    },
+
+    /**
+     * 通过其他形状对象初始化
+     * @param tetri
+     */
+    initWithTetrimino (tetri) {
+        let bricksTpl = tetri.getBricksTemplate();
+        let curRotateIdx = tetri.getCurrentRotateIndex();
+
+        this.bricksTpl = bricksTpl;
+        this._curRotateIdx = curRotateIdx;
+
+        this.updateBricks();
+
+        this._isInitedWithTetrimino = true;
     },
 
     /**
      * 设置游戏网格坐标
      * @param pos 形状元素左下角在网格中的位置坐标
      */
-    setGridPos: function (pos) {
+    setGridPos (pos) {
         if (pos === void 0 || pos.x === void 0 || pos.y === void 0) {
             return;
         }
@@ -108,16 +139,14 @@ cc.Class({
         this._gridPosition.x = pos.x;
         this._gridPosition.y = pos.y;
 
-        let size = this.node.getContentSize();
-
-        // 形状元素锚点为(0.5, 0.5), 要加上自身宽高的一半
-        //let x = this._gridPosition.x * tm.brick_width + size.width / 2;
-        //let y = this._gridPosition.y * tm.brick_height + size.height / 2;
-
         let x = this._gridPosition.x * tm.brick_width;
         let y = this._gridPosition.y * tm.brick_height;
 
         this.node.setPosition(cc.p(x, y));
+    },
+
+    getGridPos () {
+        return this._gridPosition;
     },
 
     /**
@@ -134,7 +163,8 @@ cc.Class({
      * @returns {boolean}
      */
     isValidGridPos (gridPos, bricksData) {
-        if (bricksData == void 0) {
+        //
+        if (bricksData === void 0) {
             bricksData = this._curBricksData;
         }
 
@@ -147,12 +177,8 @@ cc.Class({
                 }
 
                 let cellGridPos = cc.p(gridPos.x + col, gridPos.y + tm.brick_cell_num - row - 1);
-
-                let outOfBounds = (
-                    cellGridPos.y < 0 || cellGridPos.x < 0 ||
-                    cellGridPos.x >= tm.grid_width ||
-                    cellGridPos.y >= tm.grid_height
-                );
+                let outOfBounds = ( cellGridPos.y < 0 || cellGridPos.x < 0 ||
+                                    cellGridPos.x >= tm.grid_width || cellGridPos.y >= tm.grid_height );
 
                 // 是否出了网格边界
                 if (outOfBounds) {
@@ -160,10 +186,12 @@ cc.Class({
                 }
 
                 // 该位置网格上是否有其他元素
-                //let isCollideWithOtherBrick = this.grid.bricksMap[cellGridPos.y][cellGridPos.x];
-                //if (isCollideWithOtherBrick) {
-                //    return false;
-                //}
+                let gridBricksMap = tm.gameGridInstance.getGridBricksMap();
+                let isCollideWithOtherBrick = gridBricksMap[cellGridPos.y][cellGridPos.x];
+
+                if (isCollideWithOtherBrick) {
+                    return false;
+                }
             }
         }
 
@@ -206,9 +234,6 @@ cc.Class({
         if (canRotate) {
             this._curRotateIdx = rotateIndex;
         }
-
-        //this._curRotateIdx++;
-        //this._curRotateIdx = this._curRotateIdx % this.bricksTpl.length;
     },
 
     /**
@@ -364,6 +389,7 @@ cc.Class({
 
             } else {
                 this._isLocked = true;
+                tm.gameGridInstance.addLockedTetrimino(this);
             }
         }
     },
@@ -385,6 +411,9 @@ cc.Class({
      */
     update (dt) {
         //
+        if (this._isLocked || tm.gameGridInstance.getGameState() !== tm.GameStatus.Running) {
+            return;
+        }
 
         // 刷新方向
         this.updateDirection(dt);
