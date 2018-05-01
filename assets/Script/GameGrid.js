@@ -9,6 +9,7 @@ cc.Class({
 
     properties: {
         brickCellPrefab: cc.Prefab,
+        bombBrickPrefab: cc.Prefab,
         tetriminoPrefab: cc.Prefab,
     },
 
@@ -224,7 +225,17 @@ cc.Class({
 
                 let tetriGridPos = tetrimino.getGridPos();
                 let gridPos = cc.p(tetriGridPos.x + col, tetriGridPos.y + (tm.brick_cell_num - row - 1));
-                this._gridBricksMap[gridPos.y][gridPos.x] = 1;
+                //this._gridBricksMap[gridPos.y][gridPos.x] = 1;
+
+                //
+                if (tetrimino.isBomb) {
+                    //如果是炸弹就标记为－1
+                    this._gridBricksMap[gridPos.y][gridPos.x] = -1;
+
+                } else {
+                    // 正常格子元素标记为1
+                    this._gridBricksMap[gridPos.y][gridPos.x] = 1;
+                }
             }
         }
 
@@ -324,12 +335,16 @@ cc.Class({
                 //
                 let brickIndex = i * tm.grid_width + j;
 
-                if (!this._gridBricksMap[i][j]) {
+                if (this._gridBricksMap[i][j] === 0) {
                     continue;
                 }
 
-                let brickCell = cc.instantiate(this.brickCellPrefab);
-                let brickComp = brickCell.getComponent('BrickCell');
+                let isBomb = (this._gridBricksMap[i][j] === -1);
+                let tarPrefab = isBomb ? this.bombBrickPrefab : this.brickCellPrefab;
+                let componentName = isBomb ? 'BombBrick' : 'BrickCell';
+
+                let brickCell = cc.instantiate(tarPrefab);
+                let brickComp = brickCell.getComponent(componentName);
 
                 brickComp.setGridIndex(brickIndex);
 
@@ -338,6 +353,11 @@ cc.Class({
 
                 brickCell.setPosition(cc.p(x, y));
                 this.node.addChild(brickCell);
+
+                //
+                if (isBomb) {
+                    brickComp.doExplode();
+                }
 
                 //
                 this._brickSprites.push(brickCell);

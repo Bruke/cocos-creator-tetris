@@ -1099,6 +1099,9 @@
     "brickCellPrefab": {
       "__uuid__": "6d96cadf-2eba-48f9-b445-ac0fbfc99dad"
     },
+    "bombBrickPrefab": {
+      "__uuid__": "323caf2f-148b-47ab-8066-20c4ed1c9749"
+    },
     "tetriminoPrefab": {
       "__uuid__": "c0ea9ea3-3986-4af1-9d33-4a77dc53c966"
     }
