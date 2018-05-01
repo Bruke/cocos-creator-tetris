@@ -7,15 +7,15 @@ cc.Class({
     properties: {
         // 爆炸特效
         explodePrefab: cc.Prefab,
+
+        _readyToBomb: false,
     },
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {},
-
-    start () {
-        // Test Explode
-        let explode = cc.instantiate(this.explodePrefab);
+    onLoad () {
+        //
+        let explode = this._explode = cc.instantiate(this.explodePrefab);
         this.node.addChild(explode);
 
         let self = this;
@@ -24,10 +24,26 @@ cc.Class({
             self.onBrickExplode();
         });
 
-        explodeComp.doExplode();
+        // Test Explode
+        //explodeComp.doExplode();
     },
 
-    // update (dt) {},
+    start () {
+    },
+
+    update (dt) {
+        if (this._readyToBomb && this._explode) {
+            let explodeComp = this._explode.getComponent('Explode');
+            explodeComp.doExplode();
+            //
+            this._readyToBomb = false;
+            this._explode = null;
+        }
+    },
+
+    doExplode () {
+        this._readyToBomb = true;
+    },
 
     onBrickExplode () {
         // 发送系统消息

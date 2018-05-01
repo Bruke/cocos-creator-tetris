@@ -38,11 +38,23 @@ cc.Class({
             }
         },
 
+        // 是否是炸弹类型
+        isBomb: {
+            get () {
+                return this._isBomb;
+            },
+            set (value) {
+                this._isBomb = !!value;
+            }
+        },
+
         _isTouchingDown: false, // 当前是否出于按下状态
         _isLocked: false, // 形状元素落地后锁定不能再移动
         _speedUp: false,  // 按下向下键时加速下落
 
         _isInitedWithTetrimino: false, // 是否从其他图形元素初始化
+
+        _isBomb: false, // 是否是炸弹类型
 
         // 构成形状的小元素块
         brickPrefab: cc.Prefab,
@@ -323,6 +335,7 @@ cc.Class({
         let tarPrefab = isBomb ? this.bombBrickPrefab : this.brickPrefab;
 
         if (isBomb) {
+            this._isBomb = true;
             this._curBricksData = tm.convertBombToNormal(this._curBricksData);
         }
 
