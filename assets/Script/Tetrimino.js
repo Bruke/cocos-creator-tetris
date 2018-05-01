@@ -8,7 +8,6 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-
         // 落地后被锁定
         locked: {
             get () {
@@ -48,12 +47,8 @@ cc.Class({
         // 构成形状的小元素块
         brickPrefab: cc.Prefab,
 
-        // 构成每一种形状的小元素块对象集合
-        // 所有形状元素都是有四个小元素块构成的
-        bricks: {
-            default: [],
-            type: cc.Prefab
-        },
+        // 炸弹元素块
+        bombBrickPrefab: cc.Prefab,
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -72,6 +67,9 @@ cc.Class({
         if ( !this._isInitedWithTetrimino ) {
             // 随机选择一个图形模版
             this.bricksTpl = tm.utils.randomArrayItems(tm.TetriminoDict)[0];
+            
+            // Test Bomb
+            //this.bricksTpl = tm.TetriminoDict[0];
 
             // 随机当前模版旋转位置
             this._curRotateIdx = tm.utils.getRandomInt(this.bricksTpl.length);
@@ -215,7 +213,7 @@ cc.Class({
 
         } else {
             // 边界检测
-            var leftLedge = -(this._gridPosition.x + rotatedPaddings.left);
+            var leftLedge  = -(this._gridPosition.x + rotatedPaddings.left);
             var rightLedge = (this._gridPosition.x + tm.brick_cell_num - rotatedPaddings.right) - tm.grid_width;
             var correctToRightPos = cc.p(this._gridPosition.x + leftLedge, this._gridPosition.y);
             var correctToLeftPos  = cc.p(this._gridPosition.x - rightLedge, this._gridPosition.y);
@@ -320,18 +318,24 @@ cc.Class({
 
         this._curBricksData = this.bricksTpl[this._curRotateIdx];
 
+        let isBomb = tm.isBombTetrimino(this._curBricksData);
         let row = tm.brick_cell_num;
+        let tarPrefab = isBomb ? this.bombBrickPrefab : this.brickPrefab;
+
+        if (isBomb) {
+            this._curBricksData = tm.convertBombToNormal(this._curBricksData);
+        }
 
         while (row--) {
             for (let col = 0; col < tm.brick_cell_num; col++) {
-                if (!this._curBricksData[row][col]) continue;
-                let brick = cc.instantiate(this.brickPrefab);
-                brick.setPosition(
-                    //col * tm.brick_width + tm.brick_width * 0.5,
-                    //(tm.brick_cell_num - row - 1) * tm.brick_height
-                    (col + 0.5) * tm.brick_width,
-                    (tm.brick_cell_num - row - 0.5) * tm.brick_height
-                );
+                if (!this._curBricksData[row][col]) {
+                    continue;
+                }
+
+                let brick = cc.instantiate(tarPrefab);
+                let x = (col + 0.5) * tm.brick_width;
+                let y = (tm.brick_cell_num - row - 0.5) * tm.brick_height;
+                brick.setPosition(cc.p(x, y));
                 this.node.addChild(brick);
             }
         }

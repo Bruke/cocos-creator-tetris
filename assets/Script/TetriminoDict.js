@@ -46,6 +46,18 @@ tm.gameGridInstance = null;
  */
 tm.TetriminoDict = [
     /**
+     * 全部-1暂定为炸弹块
+     */
+    [
+        [
+            [-1, -1, -1, -1],
+            [-1, -1, -1, -1],
+            [-1, -1, -1, -1],
+            [-1, -1, -1, -1]
+        ]
+    ],
+
+    /**
      * 方块元素, 仅一种变化
      */
     [
@@ -287,6 +299,55 @@ tm.TetriminoDict = [
         ]
     ]
 ];
+
+
+/**
+ * 检查是否炸弹元素, 全部为-1即为炸弹
+ * @param bricksMap
+ * @returns {boolean}
+ */
+tm.isBombTetrimino = function(bricksMap) {
+    let isBomb = true;
+    let row = tm.brick_cell_num;
+
+    while (row--) {
+        for (let col = 0; col < tm.brick_cell_num; col++) {
+            if (bricksMap[row][col] !== -1) {
+                isBomb = false;
+            }
+        }
+    }
+    return isBomb;
+};
+
+/**
+ * 把炸弹元素转换为正常格式
+ * 转换前
+ * [-1, -1, -1, -1],
+ * [-1, -1, -1, -1],
+ * [-1, -1, -1, -1],
+ * [-1, -1, -1, -1]
+ *
+ * 转换后
+ * [0, 0, 0, 0],
+ * [0, 0, 0, 0],
+ * [0, 1, 0, 0],
+ * [0, 0, 0, 0]
+ *
+ * @param bricksMap
+ */
+tm.convertBombToNormal = function(bricksMap) {
+    let isBomb = tm.isBombTetrimino(bricksMap);
+    let result = [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 0, 0]
+    ];
+
+    return result;
+};
+
 
 /**
  *

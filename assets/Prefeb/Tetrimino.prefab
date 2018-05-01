@@ -68,15 +68,16 @@
       "__id__": 1
     },
     "_enabled": true,
+    "_isTouchingDown": false,
+    "_isLocked": false,
+    "_speedUp": false,
+    "_isInitedWithTetrimino": false,
     "brickPrefab": {
       "__uuid__": "6d96cadf-2eba-48f9-b445-ac0fbfc99dad"
     },
-    "bricks": [
-      null,
-      null,
-      null,
-      null
-    ]
+    "bombBrickPrefab": {
+      "__uuid__": "323caf2f-148b-47ab-8066-20c4ed1c9749"
+    }
   },
   {
     "__type__": "cc.PrefabInfo",

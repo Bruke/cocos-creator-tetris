@@ -10,7 +10,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "explode",
+    "_name": "brickImg",
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
@@ -22,13 +22,10 @@
       },
       {
         "__id__": 3
-      },
-      {
-        "__id__": 4
       }
     ],
     "_prefab": {
-      "__id__": 5
+      "__id__": 4
     },
     "_id": "",
     "_opacity": 255,
@@ -47,8 +44,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 44,
-      "height": 42
+      "width": 46,
+      "height": 46
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -75,10 +72,10 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "a217914d-8dce-4059-bb11-b5de505189f6"
+      "__uuid__": "e67aaa55-6a7d-4291-b4f9-c9d17c216e96"
     },
-    "_type": 0,
-    "_sizeMode": 1,
+    "_type": 1,
+    "_sizeMode": 0,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -87,35 +84,23 @@
     },
     "_fillStart": 0,
     "_fillRange": 0,
-    "_isTrimmedMode": false,
+    "_isTrimmedMode": true,
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_atlas": null
   },
   {
-    "__type__": "cc.Animation",
+    "__type__": "55307yqpzxIMK7tuDd75XdK",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 1
     },
     "_enabled": true,
-    "_defaultClip": null,
-    "_clips": [
-      {
-        "__uuid__": "46c0a73c-e4dc-443e-a232-79403383b20f"
-      }
-    ],
-    "playOnLoad": false
-  },
-  {
-    "__type__": "796adEcTT1EVbOZopELZpQ9",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
+    "explodePrefab": {
+      "__uuid__": "5945fd71-479e-44fc-b612-6f7a62b93a19"
     },
-    "_enabled": true
+    "_gridIndex": -1
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -123,9 +108,9 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "5945fd71-479e-44fc-b612-6f7a62b93a19"
+      "__uuid__": "323caf2f-148b-47ab-8066-20c4ed1c9749"
     },
-    "fileId": "46z1tmqrRHtJMWorbThBsQ",
+    "fileId": "caPl8zW3lCwIojZ2LkqSVI",
     "sync": false
   }
 ]

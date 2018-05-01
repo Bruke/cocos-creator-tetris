@@ -69,5 +69,16 @@
       }
     }
   },
-  "events": []
+  "events": [
+    {
+      "frame": 0.25,
+      "func": "onExplodeEffect",
+      "params": []
+    },
+    {
+      "frame": 0.25,
+      "func": "",
+      "params": []
+    }
+  ]
 }

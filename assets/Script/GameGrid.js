@@ -20,8 +20,11 @@ cc.Class({
 
         this._gameState = tm.GameStatus.Ready;
 
-        // 网格中地块Cell元素二纬数组
+        // 网格中Cell元素二纬数组
         this._gridBricksMap = [];
+
+        // 网格Cell精灵数组
+        this._brickSprites = [];
 
         // 设置网格节点宽高
         this.node.setContentSize(tm.brick_width * tm.grid_width, tm.brick_height * tm.grid_height);
@@ -61,11 +64,13 @@ cc.Class({
     registerCustomEvent () {
         cc.systemEvent.on('ChangeDirection',   this.onEvtChangeDirection, this);
         cc.systemEvent.on('CancelDirection',   this.onEvtCancelDirection, this);
+        cc.systemEvent.on('BrickExplode',      this.onEvtBrickExplode, this);
     },
 
     unRegisterCustomEvent () {
         cc.systemEvent.off('ChangeDirection',   this.onEvtChangeDirection, this);
         cc.systemEvent.off('CancelDirection',   this.onEvtCancelDirection, this);
+        cc.systemEvent.off('BrickExplode',      this.onEvtBrickExplode, this);
     },
 
 
@@ -113,7 +118,7 @@ cc.Class({
 
     // ---------------------------------- 自定义消息事件处理 ----------------------------------------- //
     onEvtChangeDirection (event) {
-        //this._curTetrimino.rotateOnce();
+        //
         let direction = event.detail.direction;
         this.sendChangeDirectionCommand(direction);
     },
@@ -122,6 +127,21 @@ cc.Class({
         this.cancelChangeDirectionCommand();
     },
 
+    onEvtBrickExplode (event) {
+        let brickIndex = event.detail.brickIndex;
+        let brickSprites = this._brickSprites;
+
+        for (let i = 0; i < brickSprites.length; i++) {
+            let brickSpr = brickSprites[i];
+            let brickComp = brickSpr.getComponent('BrickCell');
+
+            if (brickComp.getGridIndex() === brickIndex) {
+                // 找到爆炸点, 处理爆炸逻辑
+                this._brickCellExploded(brickComp);
+                break;
+            }
+        }
+    },
 
     // --------------------------------------------------------------------------------------------- //
     setGameLevel (level) {
@@ -135,14 +155,26 @@ cc.Class({
         this._updateGridBricks();
     },
 
+    /**
+     * 获得地图网格数据
+     * @returns {Array|*}
+     */
     getGridBricksMap () {
         return this._gridBricksMap;
     },
 
+    /**
+     * 设置游戏状态
+     * @param state
+     */
     setGameState (state) {
         this._gameState = state;
     },
 
+    /**
+     * 获取游戏状态
+     * @returns {*}
+     */
     getGameState () {
         return this._gameState;
     },
@@ -182,6 +214,7 @@ cc.Class({
     addLockedTetrimino: function (tetrimino) {
         //
         let row = tm.brick_cell_num;
+
         while (row--) {
             for (let col = 0; col < tm.brick_cell_num; col++) {
                 let bricksData = tetrimino.getBricksData();
@@ -235,6 +268,15 @@ cc.Class({
     },
 
     /**
+     * 网格cell爆炸消除逻辑
+     * @param brickComp
+     * @private
+     */
+    _brickCellExploded (brickComp) {
+       let gridIndex = brickComp.getGridIndex();
+    },
+
+    /**
      * 删除已经填满的行
      * @private
      */
@@ -269,25 +311,36 @@ cc.Class({
      * @private
      */
     _rebuildAllGridBricks () {
+        //
+        this._brickSprites.length = 0;
+
         // 先删除全部元素
         this.node.removeAllChildren();
+
 
         // 重新创建格子元素
         for (let i = 0; i < tm.grid_height; i++) {
             for (let j = 0; j < tm.grid_width; j++) {
+                //
+                let brickIndex = i * tm.grid_width + j;
+
                 if (!this._gridBricksMap[i][j]) {
                     continue;
                 }
 
                 let brickCell = cc.instantiate(this.brickCellPrefab);
+                let brickComp = brickCell.getComponent('BrickCell');
 
-                brickCell.setPosition(
-                    //j * tm.brick_width + tm.brick_width * 0.5,
-                    //i * tm.brick_height
-                    (j + 0.5) * tm.brick_width,
-                    (i + 0.5) * tm.brick_height
-                );
+                brickComp.setGridIndex(brickIndex);
+
+                let x = (j + 0.5) * tm.brick_width;
+                let y = (i + 0.5) * tm.brick_height;
+
+                brickCell.setPosition(cc.p(x, y));
                 this.node.addChild(brickCell);
+
+                //
+                this._brickSprites.push(brickCell);
             }
         }
     },
@@ -334,6 +387,11 @@ cc.Class({
         return true;
     },
 
+    /**
+     * 检查指定行是否空行
+     * @param row
+     * @returns {boolean}
+     */
     isRowEmpty (row) {
         let i = row.length;
         while (i--) {
@@ -344,6 +402,12 @@ cc.Class({
         return true;
     },
 
+    /**
+     * 检查指定列是否空列
+     * @param bricksMap
+     * @param col
+     * @returns {boolean}
+     */
     isColEmpty (bricksMap, col) {
         let i = bricksMap.length;
         while (i--) {
@@ -354,6 +418,12 @@ cc.Class({
         return true;
     },
 
+    /**
+     * 创建一行网格
+     * @param width
+     * @param needCreateBricks
+     * @returns {Array}
+     */
     createRow (width, needCreateBricks) {
         let row = [];
         let i = width;
