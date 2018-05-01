@@ -67,7 +67,7 @@ cc.Class({
         if ( !this._isInitedWithTetrimino ) {
             // 随机选择一个图形模版
             this.bricksTpl = tm.utils.randomArrayItems(tm.TetriminoDict)[0];
-            
+
             // Test Bomb
             //this.bricksTpl = tm.TetriminoDict[0];
 
