@@ -280,11 +280,15 @@ cc.Class({
 
     /**
      * 网格cell爆炸消除逻辑
+     * 消除炸弹及其周围伤害范围内的格子元素
      * @param brickComp
      * @private
      */
     _brickCellExploded (brickComp) {
-       let gridIndex = brickComp.getGridIndex();
+        let gridIndex = brickComp.getGridIndex();
+        let effectRadius = brickComp.effectRadius;
+
+        // 消除网格对应位置的数据
     },
 
     /**
@@ -339,6 +343,7 @@ cc.Class({
                     continue;
                 }
 
+                // -1则表示该格子元素为炸弹
                 let isBomb = (this._gridBricksMap[i][j] === -1);
                 let tarPrefab = isBomb ? this.bombBrickPrefab : this.brickCellPrefab;
                 let componentName = isBomb ? 'BombBrick' : 'BrickCell';
@@ -346,6 +351,7 @@ cc.Class({
                 let brickCell = cc.instantiate(tarPrefab);
                 let brickComp = brickCell.getComponent(componentName);
 
+                // 设置网格位置索引
                 brickComp.setGridIndex(brickIndex);
 
                 let x = (j + 0.5) * tm.brick_width;
@@ -354,9 +360,13 @@ cc.Class({
                 brickCell.setPosition(cc.p(x, y));
                 this.node.addChild(brickCell);
 
-                //
+                // 炸弹元素特殊处理
                 if (isBomb) {
+                    // 触发爆炸效果
                     brickComp.doExplode();
+
+                    // ZOrder调至最高, 确保爆炸特效不被其他格子元素遮挡
+                    brickCell.setLocalZOrder(9);
                 }
 
                 //

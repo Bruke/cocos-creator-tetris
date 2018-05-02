@@ -8,6 +8,19 @@ cc.Class({
         // 爆炸特效
         explodePrefab: cc.Prefab,
 
+        effectRadius : {
+            get () {
+                return this._effectRadius;
+            },
+            set (value) {
+                this._effectRadius = value;
+            }
+        },
+
+        // 爆炸范围半径
+        _effectRadius: 3,
+
+        // 触发爆炸标志
         _readyToBomb: false,
     },
 
