@@ -1108,6 +1108,9 @@
     "tetriminoPrefab": {
       "__uuid__": "c0ea9ea3-3986-4af1-9d33-4a77dc53c966"
     },
+    "clearSound": {
+      "__uuid__": "b9a7db3b-5dc5-4a9a-be48-94d6d80879f3"
+    },
     "fallTetriPanel": {
       "__id__": 27
     }
@@ -2044,7 +2047,7 @@
     "_volume": 1,
     "_mute": false,
     "_loop": true,
-    "playOnLoad": false,
+    "playOnLoad": true,
     "preload": false
   }
 ]

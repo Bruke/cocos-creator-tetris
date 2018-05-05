@@ -8,6 +8,9 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
+        stepSound: cc.AudioClip,  // 行进音效
+        landSound: cc.AudioClip,  // 落地音效
+
         // 落地后被锁定
         locked: {
             get () {
@@ -321,6 +324,14 @@ cc.Class({
         this._direction = tm.Direction.None;
     },
 
+    playStepSound () {
+        //cc.audioEngine.playEffect(this.stepSound, false);
+    },
+
+    playLandSound () {
+        cc.audioEngine.playEffect(this.landSound, false);
+    },
+
     /**
      * 刷新形状块元素
      */
@@ -353,6 +364,7 @@ cc.Class({
             }
         }
     },
+
 
     /**
      * 刷新元素移动方向
@@ -389,6 +401,8 @@ cc.Class({
                 this.rotateOnce();
                 break;
         }
+
+        this.playStepSound();
     },
 
     /**
@@ -403,10 +417,13 @@ cc.Class({
 
             if (this.canMoveDown()) {
                 this.moveDownOnce();
+                this.playStepSound();  //
 
             } else {
                 this._isLocked = true;
                 tm.gameGridInstance.addLockedTetrimino(this);
+
+                this.playLandSound();
             }
         }
     },

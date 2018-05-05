@@ -68,10 +68,17 @@
       "__id__": 1
     },
     "_enabled": true,
+    "stepSound": {
+      "__uuid__": "75e77888-6ad7-41f6-b5d8-bb54123b1df1"
+    },
+    "landSound": {
+      "__uuid__": "111c04ae-7fbf-4943-b321-e01f51a5bbee"
+    },
     "_isTouchingDown": false,
     "_isLocked": false,
     "_speedUp": false,
     "_isInitedWithTetrimino": false,
+    "_isBomb": false,
     "brickPrefab": {
       "__uuid__": "6d96cadf-2eba-48f9-b445-ac0fbfc99dad"
     },

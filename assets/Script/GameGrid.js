@@ -12,6 +12,8 @@ cc.Class({
         bombBrickPrefab: cc.Prefab,
         tetriminoPrefab: cc.Prefab,
 
+        clearSound: cc.AudioClip,  // 消除音效
+
         fallTetriPanel: {
             default: null,
             type: cc.Node
@@ -365,6 +367,10 @@ cc.Class({
         return result;
     },
 
+    playClearSound () {
+        cc.audioEngine.playEffect(this.clearSound, false);
+    },
+
     /**
      * 删除已经填满的行
      * @private
@@ -384,6 +390,7 @@ cc.Class({
         //
         if (removedCount) {
             // 播放消除音效
+            this.playClearSound();
 
             // 刷新得分
             //cc.game.state.addPointsForRowsCount(removedCount);

@@ -4,7 +4,7 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-
+        explodeSound: cc.AudioClip,  // 爆炸音效
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -29,6 +29,8 @@ cc.Class({
     doExplode () {
         let explodeComp = this.getComponent(cc.Animation);
         explodeComp.play('explode');
+
+        cc.audioEngine.playEffect(this.explodeSound, false);
     },
 
     onExplodeEffect () {

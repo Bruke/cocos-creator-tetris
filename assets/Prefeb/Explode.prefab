@@ -115,7 +115,10 @@
     "node": {
       "__id__": 1
     },
-    "_enabled": true
+    "_enabled": true,
+    "explodeSound": {
+      "__uuid__": "c6576c5a-a33c-4751-9fc7-9c77681dab77"
+    }
   },
   {
     "__type__": "cc.PrefabInfo",
