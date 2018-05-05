@@ -35,9 +35,9 @@ cc.Class({
         cc.log('explodeEffect');
 
         //
-        if (this._explodeCallfunc) {
-            this._explodeCallfunc();
-        }
+        //if (this._explodeCallfunc) {
+        //    this._explodeCallfunc();
+        //}
     },
 
     onExplodeFinish () {
@@ -47,6 +47,11 @@ cc.Class({
 
         if (this.node) {
             this.node.removeFromParent();
+        }
+
+        //
+        if (this._explodeCallfunc) {
+            this._explodeCallfunc();
         }
     },
 });

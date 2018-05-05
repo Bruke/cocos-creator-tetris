@@ -11,6 +11,11 @@ cc.Class({
         brickCellPrefab: cc.Prefab,
         bombBrickPrefab: cc.Prefab,
         tetriminoPrefab: cc.Prefab,
+
+        fallTetriPanel: {
+            default: null,
+            type: cc.Node
+        },
     },
 
 
@@ -201,7 +206,9 @@ cc.Class({
 
         newTetriComp.initWithTetrimino(sceneNextTetri.getComponent("Tetrimino"));
 
-        this.node.addChild(newTetrimino);
+        //this.node.addChild(newTetrimino);
+        this.fallTetriPanel.addChild(newTetrimino);
+
         this._curTetrimino = newTetriComp;
 
         // 定位到出生点
@@ -219,13 +226,13 @@ cc.Class({
         while (row--) {
             for (let col = 0; col < tm.brick_cell_num; col++) {
                 let bricksData = tetrimino.getBricksData();
+
                 if (!bricksData[row][col]) {
                     continue;
                 }
 
                 let tetriGridPos = tetrimino.getGridPos();
                 let gridPos = cc.p(tetriGridPos.x + col, tetriGridPos.y + (tm.brick_cell_num - row - 1));
-                //this._gridBricksMap[gridPos.y][gridPos.x] = 1;
 
                 //
                 if (tetrimino.isBomb) {
@@ -239,6 +246,11 @@ cc.Class({
             }
         }
 
+        // added by bxh 20180505
+        // tetrimino作为this.fallTetriPanel的子节点, 要主动删除
+        tetrimino.node.removeFromParent();
+        // end
+
         //
         this._updateGridBricks();
 
@@ -249,12 +261,17 @@ cc.Class({
             this._gameState = tm.GameStatus.GameOver;
 
         } else {
-            // 创建下一个下落形状元素
-            this.createNextTetrimino();
-
-            // 继续生成下一个预览元素
-            tm.gameSceneInstance.initNextTetrimino();
+            //
+            this.updateAndCreateNextTetrimino();
         }
+    },
+
+    updateAndCreateNextTetrimino () {
+        // 创建下一个下落形状元素
+        this.createNextTetrimino();
+
+        // 继续生成下一个预览元素
+        tm.gameSceneInstance.initNextTetrimino();
     },
 
     /**
@@ -288,7 +305,64 @@ cc.Class({
         let gridIndex = brickComp.getGridIndex();
         let effectRadius = brickComp.effectRadius;
 
+        //  获得以 (row,col) 为中心, effectRadius * effectRadius 范围内的所有合法网格坐标
+        let subGridIndexArr = this._getSubGrid(gridIndex, effectRadius);
+
         // 消除网格对应位置的数据
+        for (let i = 0; i < subGridIndexArr.length; i++) {
+            let index = subGridIndexArr[i];
+            let row = Math.floor(index / tm.grid_width);
+            let col = index % tm.grid_width;
+
+            this._gridBricksMap[row][col] = 0;
+        }
+
+        // 刷新绘制一下网格
+        this._updateGridBricks();
+
+        // 生成下一个形状元素
+        //this.updateAndCreateNextTetrimino();
+    },
+
+    /**
+     * 获得以指定索引位置为中心, 指定范围半径的子网格索引
+     * @param gridIndex
+     * @param radius  须为奇数
+     * @returns {Array}
+     * @private
+     */
+    _getSubGrid (gridIndex, radius) {
+        let result = [];
+
+        // 先把自己放进去
+        //result.push(gridIndex);
+
+        //
+        let row = Math.floor(gridIndex / tm.grid_width);
+        let col = gridIndex % tm.grid_width;
+
+        // 找到该范围起始点、终点网格坐标
+        let span = Math.floor((radius - 1) / 2);
+        let left = col - span;
+        let bottom = row - span;
+        let right = col + span;
+        let top = row + span;
+
+        // 边界溢出处理
+        left = Math.max(left, 0);
+        bottom = Math.max(bottom, 0);
+        right = Math.min(right, tm.grid_width - 1);
+        top = Math.min(top, tm.grid_height - 1);
+
+        // 遍历
+        for (let i = bottom ; i <= top; i++) {
+            for (let j = left; j <= right; j++) {
+                let index = i * tm.grid_width + j;
+                result.push(index);
+            }
+        }
+
+        return result;
     },
 
     /**
@@ -326,11 +400,18 @@ cc.Class({
      * @private
      */
     _rebuildAllGridBricks () {
-        //
-        this._brickSprites.length = 0;
-
         // 先删除全部元素
         this.node.removeAllChildren();
+
+        /*
+        let brickSprites = this._brickSprites;
+        for (let i = 0; i < brickSprites.length; i++) {
+            brickSprites[i].removeAllChildren();
+            brickSprites[i] = null;
+        }
+        brickSprites.length = 0;
+        */
+        this._brickSprites.length = 0;
 
 
         // 重新创建格子元素
@@ -410,7 +491,8 @@ cc.Class({
     isRowCompleted (row) {
         let ci = row.length;
         while (ci--) {
-            if (!row[ci]) {
+            //if (!row[ci]) {
+            if (row[ci] === 0 || row[ci] === -1) {  // 网格为空或为炸弹时都不能消除
                 return false;
             }
         }
