@@ -376,28 +376,30 @@ cc.Class({
      * @private
      */
     _removeAllCompletedLines () {
-        let removedCount = 0;
+        let clearCount = 0;
 
         // 删除填满的行
         this._gridBricksMap = this._gridBricksMap.filter(function (row) {
             if (!this.isRowCompleted(row)) {
                 return true;
             }
-            removedCount++;
+            clearCount++;
             return false;
         }, this);
 
         //
-        if (removedCount) {
+        if (clearCount) {
             // 播放消除音效
             this.playClearSound();
 
             // 刷新得分
-            //cc.game.state.addPointsForRowsCount(removedCount);
+            let msg = new cc.Event.EventCustom('ClearLines', true);
+            msg.setUserData({'clearCount': clearCount});
+            cc.systemEvent.dispatchEvent(msg);
         }
 
         // 重新生成该行网格数据
-        while (removedCount--) {
+        while (clearCount--) {
             this._gridBricksMap.push(this.createRow(tm.grid_width));
         }
     },

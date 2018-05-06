@@ -55,11 +55,16 @@ cc.Class({
 
     // LIFE-CYCLE CALLBACKS:
     onLoad () {
-        this._elapsedTime = 0;
+        this._elapsedTime  = 0;
+        this._clearLineNum = 0;  // 当前消除行数
+        this._level = 1; // 当前关卡
+        this._hiScore = 0;
 
         this.registerKeyEvent();
         this.registerTouchEvent();
         this.registerCustomEvent();
+
+        this.updateGameScore();
 
         //
         tm.gameSceneInstance = this;
@@ -101,11 +106,11 @@ cc.Class({
     },
 
     registerCustomEvent () {
-        cc.systemEvent.on('AddScore',   this.onEvtAddScore, this);
+        cc.systemEvent.on('ClearLines',   this.onEvtClearLines, this);
     },
 
     unRegisterCustomEvent () {
-        cc.systemEvent.off('AddScore',  this.onEvtAddScore, this);
+        cc.systemEvent.off('ClearLines',  this.onEvtClearLines, this);
     },
 
     initNextTetrimino () {
@@ -148,6 +153,24 @@ cc.Class({
         }
     },
 
+    /**
+     * 刷新游戏得分信息
+     */
+    updateGameScore () {
+        this.labelLevel.getComponent(cc.Label).string = this._level + '';
+        this.labelLines.getComponent(cc.Label).string = this._clearLineNum + '';
+
+        let curScore = this._clearLineNum * 100;
+        this.labelCurScore.getComponent(cc.Label).string = curScore + '';  // 一行100分
+
+        // 检查是否超过最高历史得分
+        if (curScore > this._hiScore) {
+            this._hiScore = curScore;
+        }
+
+        this.labelHiScore.getComponent(cc.Label).string = this._hiScore + '';
+    },
+
     // ------------------------------------- 键盘事件处理 ------------------------------------------ //
     onKeyDown: function (event) {
         switch(event.keyCode) {
@@ -171,12 +194,13 @@ cc.Class({
     },
 
     // ---------------------------------- 自定义消息事件处理 ----------------------------------------- //
-    onEvtAddScore (event) {
-        if (this._gameState === GameStatus.Running) {
-            let data = event.detail;
-            //this._curScore += data.score;
-            //this.updateGameScore();
-        }
+    onEvtClearLines (event) {
+        let data = event.detail;
+        let clearCount = data.clearCount;
+
+        this._clearLineNum += clearCount;
+
+        this.updateGameScore();
     },
 
     // ---------------------------------- 按钮触摸事件处理 ----------------------------------------- //
@@ -206,51 +230,6 @@ cc.Class({
     onBtnTouchEnd (event) {
         let msg = new cc.Event.EventCustom('CancelDirection', true);
         cc.systemEvent.dispatchEvent(msg);
-    },
-
-    ///**
-    // * 旋转
-    // * @param event
-    // */
-    //onBtnRotate (event) {
-    //    let msg = new cc.Event.EventCustom('RotateShape', true);
-    //    cc.systemEvent.dispatchEvent(msg);
-    //},
-
-    ///**
-    // * 直接到底(暂不支持)
-    // * @param event
-    // */
-    //onBtnUp (event) {
-    //    let msg = new cc.Event.EventCustom('DownBottom', true);
-    //    cc.systemEvent.dispatchEvent(msg);
-    //},
-
-    ///**
-    // * 加速下落
-    // * @param event
-    // */
-    //onBtnDown (event) {
-    //    let msg = new cc.Event.EventCustom('SpeedUp', true);
-    //    cc.systemEvent.dispatchEvent(msg);
-    //},
-
-    ///**
-    // * 左移
-    // * @param event
-    // */
-    //onBtnLeft (event) {
-    //    let msg = new cc.Event.EventCustom('Leftward', true);
-    //    cc.systemEvent.dispatchEvent(msg);
-    //},
-
-    ///**
-    // * 右移
-    // * @param event
-    // */
-    //onBtnRight (event) {
-    //    let msg = new cc.Event.EventCustom('Rightward', true);
-    //    cc.systemEvent.dispatchEvent(msg);
-    //},
+    }
 
 });
