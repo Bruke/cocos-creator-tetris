@@ -60,6 +60,7 @@ cc.Class({
         this._level = 1; // 当前关卡
         this._hiScore = 0;
 
+        this.initEnv();
         this.registerKeyEvent();
         this.registerTouchEvent();
         this.registerCustomEvent();
@@ -68,6 +69,14 @@ cc.Class({
 
         //
         tm.gameSceneInstance = this;
+    },
+
+    initEnv () {
+        // 读取本地记录最高历史得分
+        let hiScore = cc.sys.localStorage.getItem('hiScore');
+        if (hiScore !== null) {
+            this._hiScore = parseInt(hiScore);
+        }
     },
 
     onDestroy () {
@@ -166,6 +175,9 @@ cc.Class({
         // 检查是否超过最高历史得分
         if (curScore > this._hiScore) {
             this._hiScore = curScore;
+
+            // 保存到本地存储
+            cc.sys.localStorage.setItem('hiScore', curScore);
         }
 
         this.labelHiScore.getComponent(cc.Label).string = this._hiScore + '';
