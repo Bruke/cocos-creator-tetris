@@ -33,12 +33,14 @@ cc.Class({
 
         let self = this;
         let explodeComp = explode.getComponent('Explode');
+
         explodeComp.setExplodeCallback(function () {
             self.onBrickExplode();
         });
 
-        // Test Explode
-        //explodeComp.doExplode();
+        explodeComp.setExplodeFinishCallback(function () {
+            self.onBrickExplodeFinish();
+        });
     },
 
     start () {
@@ -59,9 +61,14 @@ cc.Class({
     },
 
     onBrickExplode () {
+
+    },
+
+    onBrickExplodeFinish () {
         // 发送系统消息
         let event = new cc.Event.EventCustom('BrickExplode', true);
         event.setUserData({'brickIndex': this._gridIndex});
         cc.systemEvent.dispatchEvent(event);
-    },
+    }
 });
+
