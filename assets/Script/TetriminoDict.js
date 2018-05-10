@@ -348,7 +348,6 @@ tm.convertBombToNormal = function(bricksMap) {
     return result;
 };
 
-
 /**
  *
  * @param bricksMap

@@ -1,14 +1,14 @@
 {
   "ver": "1.0.0",
-  "uuid": "3f3e5d6c-78b7-4815-afde-51a2eb633932",
+  "uuid": "2f8f4ee7-9f1d-4855-a269-450029f67f21",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "subMetas": {
     "brickYellow": {
       "ver": "1.0.3",
-      "uuid": "e9487232-e21d-4289-86cf-0b7b924f6c01",
-      "rawTextureUuid": "3f3e5d6c-78b7-4815-afde-51a2eb633932",
+      "uuid": "82b6f4a3-f3e2-4442-909f-e0f4c69cb150",
+      "rawTextureUuid": "2f8f4ee7-9f1d-4855-a269-450029f67f21",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

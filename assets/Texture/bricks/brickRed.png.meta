@@ -1,14 +1,14 @@
 {
   "ver": "1.0.0",
-  "uuid": "133913d6-e2a6-4c5c-9d3f-18e3d9c93352",
+  "uuid": "862a4cd1-ce57-4f37-beee-0819a8724259",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "subMetas": {
     "brickRed": {
       "ver": "1.0.3",
-      "uuid": "1507e9c1-f11c-41b6-bc8e-2158d971bde8",
-      "rawTextureUuid": "133913d6-e2a6-4c5c-9d3f-18e3d9c93352",
+      "uuid": "a05d2b8b-99c4-467f-9002-ad82cacbd930",
+      "rawTextureUuid": "862a4cd1-ce57-4f37-beee-0819a8724259",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

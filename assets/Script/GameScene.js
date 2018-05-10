@@ -166,11 +166,14 @@ cc.Class({
      * 刷新游戏得分信息
      */
     updateGameScore () {
+        // 刷新当前总计消除行数
         this.labelLevel.getComponent(cc.Label).string = this._level + '';
         this.labelLines.getComponent(cc.Label).string = this._clearLineNum + '';
 
+        // 一行100分
         let curScore = this._clearLineNum * 100;
-        this.labelCurScore.getComponent(cc.Label).string = curScore + '';  // 一行100分
+        // 刷新当前得分
+        this.labelCurScore.getComponent(cc.Label).string = curScore + '';
 
         // 检查是否超过最高历史得分
         if (curScore > this._hiScore) {
@@ -180,6 +183,7 @@ cc.Class({
             cc.sys.localStorage.setItem('hiScore', curScore);
         }
 
+        // 刷新最高得分
         this.labelHiScore.getComponent(cc.Label).string = this._hiScore + '';
     },
 

@@ -1,4 +1,11 @@
 
+
+/**
+ * 炸弹基本元素对象
+ * 爆炸时可消除以自身位置为中心 3 x 3 范围的格子对象
+ */
+
+// 继承自基本网格对象
 let BrickCell = require("BrickCell");
 
 cc.Class({
@@ -8,6 +15,7 @@ cc.Class({
         // 爆炸特效
         explodePrefab: cc.Prefab,
 
+        // get set 方法
         effectRadius : {
             get () {
                 return this._effectRadius;
@@ -27,17 +35,19 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-        //
+        // 爆炸特效对象
         let explode = this._explode = cc.instantiate(this.explodePrefab);
         this.node.addChild(explode);
 
         let self = this;
         let explodeComp = explode.getComponent('Explode');
 
+        // 设置爆炸生效回调函数
         explodeComp.setExplodeCallback(function () {
             self.onBrickExplode();
         });
 
+        // 设置爆炸完成回调函数
         explodeComp.setExplodeFinishCallback(function () {
             self.onBrickExplodeFinish();
         });
@@ -47,6 +57,7 @@ cc.Class({
     },
 
     update (dt) {
+        // 检查是否触发爆炸条件
         if (this._readyToBomb && this._explode) {
             let explodeComp = this._explode.getComponent('Explode');
             explodeComp.doExplode();
@@ -56,12 +67,14 @@ cc.Class({
         }
     },
 
+    /**
+     * 触发爆炸
+     */
     doExplode () {
         this._readyToBomb = true;
     },
 
     onBrickExplode () {
-
     },
 
     onBrickExplodeFinish () {

@@ -1,6 +1,7 @@
 
 
 /**
+ * 形状元素旋转变换、下落核心逻辑
  * 俄罗斯方块中各种下落的形状元素统称Tetrimino
  */
 
@@ -112,14 +113,25 @@ cc.Class({
     start () {
     },
 
+    /**
+     * 获取形状元素模板数据
+     * @returns {*}
+     */
     getBricksTemplate () {
         return this.bricksTpl;
     },
 
+    /**
+     * 获取当前状态网格数据
+     * @returns {Array|*}
+     */
     getBricksData () {
         return this._curBricksData;
     },
 
+    /**
+     * 获取当前旋转状态索引
+     */
     getCurrentRotateIndex () {
         return this._curRotateIdx;
     },
@@ -158,6 +170,10 @@ cc.Class({
         this.node.setPosition(cc.p(x, y));
     },
 
+    /**
+     * 获得在网格世界中的位置坐标
+     * @returns {*}
+     */
     getGridPos () {
         return this._gridPosition;
     },
@@ -324,10 +340,16 @@ cc.Class({
         this._direction = tm.Direction.None;
     },
 
+    /**
+     * 步进音效
+     */
     playStepSound () {
         //cc.audioEngine.playEffect(this.stepSound, false);
     },
 
+    /**
+     * 落地音效
+     */
     playLandSound () {
         cc.audioEngine.playEffect(this.landSound, false);
     },
@@ -339,8 +361,10 @@ cc.Class({
         //
         this.node.removeAllChildren();
 
+        // 刷新当前网格数据
         this._curBricksData = this.bricksTpl[this._curRotateIdx];
 
+        // 检查是否是炸弹对象
         let isBomb = tm.isBombTetrimino(this._curBricksData);
         let row = tm.brick_cell_num;
         let tarPrefab = isBomb ? this.bombBrickPrefab : this.brickPrefab;
@@ -350,6 +374,7 @@ cc.Class({
             this._curBricksData = tm.convertBombToNormal(this._curBricksData);
         }
 
+        // 创建所有网格对象
         while (row--) {
             for (let col = 0; col < tm.brick_cell_num; col++) {
                 if (!this._curBricksData[row][col]) {
@@ -376,6 +401,7 @@ cc.Class({
             return;
         }
 
+        // 检查变换时间间隔
         if (this._changeElapsedTime !== -1 && this._changeElapsedTime < this._changeActionInterval) {
             this._changeElapsedTime += dt;
             return;
@@ -386,22 +412,23 @@ cc.Class({
         //
         switch (this._direction) {
             case tm.Direction.Left:
-                this.moveLeftOnce();
+                this.moveLeftOnce();  // 左移一格
                 break;
 
             case tm.Direction.Right:
-                this.moveRightOnce();
+                this.moveRightOnce(); // 右移一格
                 break;
 
             case tm.Direction.Down:
-                this.startSpeedUp();
+                this.startSpeedUp(); // 加速下落
                 break;
 
             case tm.Direction.Rotate:
-                this.rotateOnce();
+                this.rotateOnce();   // 旋转一次
                 break;
         }
 
+        // 步进音效
         this.playStepSound();
     },
 
@@ -416,10 +443,12 @@ cc.Class({
             this._fallElapsedTime = 0;
 
             if (this.canMoveDown()) {
+                // 可以继续下落
                 this.moveDownOnce();
                 this.playStepSound();  //
 
             } else {
+                // 已经到达底部, 锁定该元素不可再移动
                 this._isLocked = true;
                 tm.gameGridInstance.addLockedTetrimino(this);
 
@@ -476,3 +505,4 @@ cc.Class({
         }
     },
 });
+
