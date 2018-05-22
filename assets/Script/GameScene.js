@@ -257,6 +257,12 @@ cc.Class({
     },
 
     onKeyUp: function (event) {
+        //
+        if (this._gameOver) {
+            this.onBgTouchEnd(event);
+            return;
+        }
+        
         switch(event.keyCode) {
             case cc.KEY.back: // 安卓系统下的退出键
                 //this._showExitPanel(true);
