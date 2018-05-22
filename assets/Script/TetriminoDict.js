@@ -24,7 +24,7 @@ tm.Direction = cc.Enum({
 
 // 网格矩阵的宽高数量
 tm.grid_width = 10;
-tm.grid_height = 20;
+tm.grid_height = 22;
 
 // 单个块元素宽高
 tm.brick_width  = 47;
@@ -32,7 +32,6 @@ tm.brick_height = 47;
 
 // 每个元素块包含4个基本块元素
 tm.brick_cell_num = 4;
-
 
 // 游戏场景实例对象
 tm.gameSceneInstance = null;

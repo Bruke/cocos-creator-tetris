@@ -1,10 +1,20 @@
 
-
+//
 cc.Class({
     extends: cc.Component,
 
     properties: {
         //
+        gameBg: {
+            default: null,
+            type: cc.Node
+        },
+
+        readyImg: {
+            default: null,
+            type: cc.Node
+        },
+
         labelHiScore: {
             default: null,
             type: cc.Node
@@ -60,6 +70,8 @@ cc.Class({
         this._level = 1; // 当前关卡
         this._hiScore = 0;
 
+        this._gameOver = false;
+
         this.initEnv();
         this.registerKeyEvent();
         this.registerTouchEvent();
@@ -77,6 +89,9 @@ cc.Class({
         if (hiScore !== null) {
             this._hiScore = parseInt(hiScore);
         }
+
+        //
+        this.readyImg.active = false;
     },
 
     onDestroy () {
@@ -109,9 +124,23 @@ cc.Class({
         this.speedBtn.on(cc.Node.EventType.TOUCH_END,  this.onBtnTouchEnd, this);
         this.leftBtn.on(cc.Node.EventType.TOUCH_END,   this.onBtnTouchEnd, this);
         this.rightBtn.on(cc.Node.EventType.TOUCH_END,  this.onBtnTouchEnd, this);
+
+        this.gameBg.on(cc.Node.EventType.TOUCH_END,  this.onBgTouchEnd, this);
+
     },
 
     unRegisterTouchEvent () {
+        this.rotateBtn.off(cc.Node.EventType.TOUCH_START, this.onBtnTouchBegan, this);
+        this.speedBtn.off(cc.Node.EventType.TOUCH_START,  this.onBtnTouchBegan, this);
+        this.leftBtn.off(cc.Node.EventType.TOUCH_START,   this.onBtnTouchBegan, this);
+        this.rightBtn.off(cc.Node.EventType.TOUCH_START,  this.onBtnTouchBegan, this);
+
+        this.rotateBtn.off(cc.Node.EventType.TOUCH_END, this.onBtnTouchEnd, this);
+        this.speedBtn.off(cc.Node.EventType.TOUCH_END,  this.onBtnTouchEnd, this);
+        this.leftBtn.off(cc.Node.EventType.TOUCH_END,   this.onBtnTouchEnd, this);
+        this.rightBtn.off(cc.Node.EventType.TOUCH_END,  this.onBtnTouchEnd, this);
+
+        this.gameBg.off(cc.Node.EventType.TOUCH_END,  this.onBgTouchEnd, this);
     },
 
     registerCustomEvent () {
@@ -145,6 +174,35 @@ cc.Class({
 
     update (dt) {
         //this.debugChangeTetrimino(dt);
+    },
+
+    showGameReadyStart (show) {
+        if (void 0 === show) {
+            show = true;
+        }
+
+        this.readyImg.active = show;
+
+        if (!show) {
+            this.readyImg.stopAllActions();
+        } else {
+            let action = cc.repeatForever(cc.blink(1, 1));
+            this.readyImg.runAction(action);
+        }
+    },
+
+    gameStart () {
+        this._gameOver = false;
+
+        this.showGameReadyStart(false);
+        this.initNextTetrimino();
+
+        tm.gameGridInstance.gameStart();
+    },
+
+    gameOver () {
+        this._gameOver = true;
+        this.showGameReadyStart(true);
     },
 
     /**
@@ -221,6 +279,10 @@ cc.Class({
 
     // ---------------------------------- 按钮触摸事件处理 ----------------------------------------- //
     onBtnTouchBegan (event) {
+        if (this._gameOver) {
+            return;
+        }
+
         let direction = tm.Direction.None;
 
         if (this.rotateBtn === event.target) {
@@ -244,8 +306,21 @@ cc.Class({
     },
 
     onBtnTouchEnd (event) {
+        if (this._gameOver) {
+            this.onBgTouchEnd(event);
+            return;
+        }
+
         let msg = new cc.Event.EventCustom('CancelDirection', true);
         cc.systemEvent.dispatchEvent(msg);
+    },
+
+    onBgTouchEnd: function () {
+        if (this._gameOver) {
+            this.gameStart();
+        }
     }
 
 });
+
+

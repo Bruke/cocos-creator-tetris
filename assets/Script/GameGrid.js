@@ -84,6 +84,11 @@ cc.Class({
 
     // ------------------------------------- 键盘事件处理 ------------------------------------------ //
     onKeyDown: function (event) {
+        //
+        if (this._gameState !== tm.GameStatus.Running) {
+            return;
+        }
+
         switch(event.keyCode) {
             /**
              *  同时支持w s a d字母键 和 up down left right 方向键
@@ -116,6 +121,11 @@ cc.Class({
     },
 
     onKeyUp: function (event) {
+        //
+        if (this._gameState !== tm.GameStatus.Running) {
+            return;
+        }
+
         switch(event.keyCode) {
             default:
                 // 其他键统一处理为取消移动方向
@@ -257,10 +267,12 @@ cc.Class({
         this._updateGridBricks();
 
         // 检查游戏是否结束
-        var gameOver = !this.isRowEmpty(this._gridBricksMap[tm.grid_height - 2]);  // 上方元素出生位置
+        let gameOver = !this.isRowEmpty(this._gridBricksMap[tm.grid_height - 2]);  // 上方元素出生位置
         if (gameOver) {
             // 游戏结束
             this._gameState = tm.GameStatus.GameOver;
+
+            tm.gameSceneInstance.gameOver();
 
         } else {
             //
@@ -575,3 +587,4 @@ cc.Class({
     },
 
 });
+

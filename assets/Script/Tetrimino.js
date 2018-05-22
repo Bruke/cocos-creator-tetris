@@ -101,7 +101,7 @@ cc.Class({
         this._gridPosition = cc.p(0, 0);
 
         // 图形在网格矩阵中的出生位置, 上方居中
-        this._bornGridPos = cc.p(3, 16);  // 形状元素左下角在网格中的位置坐标
+        this._bornGridPos = cc.p(3, tm.grid_height - 4);  // 形状元素左下角在网格中的位置坐标
 
         //
         this.node.setContentSize(tm.brick_width * tm.brick_cell_num, tm.brick_height * tm.brick_cell_num);
